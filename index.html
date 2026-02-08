@@ -17,34 +17,32 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
+      align-items: center;
     }
     .container {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 24px;
-      padding: 40px 20px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 40px 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
       max-width: 450px;
       width: 90%;
-      margin: auto;
-      backdrop-filter: blur(15px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
     }
     h1 {
-      font-size: 30px;
-      margin-bottom: 25px;
-      background: linear-gradient(to right, #fff, #d1c4e9);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      font-size: 32px;
+      margin-bottom: 30px;
+      font-weight: 700;
     }
     .input-group {
       display: flex;
-      background: rgba(255, 255, 255, 0.95);
+      background: white;
       border-radius: 12px;
       overflow: hidden;
       margin-bottom: 20px;
     }
     input[type="text"] {
-      flex: 1;
+      flex-grow: 1;
       padding: 15px;
       border: none;
       font-size: 16px;
@@ -52,67 +50,52 @@
       color: #333;
     }
     .paste-btn {
-      padding: 0 20px;
-      background: #7c4dff;
+      padding: 15px 25px;
+      background: linear-gradient(to right, #e040fb, #7c4dff);
       color: white;
       border: none;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
-      transition: 0.3s;
     }
-    .paste-btn:hover { background: #6200ea; }
-
-    .fetch-btn {
+    .download-btn {
       width: 100%;
       padding: 15px;
-      background: linear-gradient(45deg, #00c853, #64dd17);
+      background: linear-gradient(to right, #00c853, #64dd17);
       color: white;
       border: none;
       border-radius: 12px;
       font-size: 18px;
-      font-weight: bold;
+      font-weight: 700;
       cursor: pointer;
       box-shadow: 0 4px 15px rgba(0, 200, 83, 0.3);
+      transition: 0.3s;
     }
-
-    #quality-options {
+    .download-btn:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+    .creator {
+      margin-top: 40px;
+      font-size: 14px;
+      opacity: 0.7;
+    }
+    .contact-box {
       margin-top: 30px;
-      display: none;
-      animation: fadeIn 0.5s ease;
-    }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-    .q-btn {
-      display: block;
-      width: 100%;
-      margin: 12px 0;
-      padding: 14px;
-      text-decoration: none;
-      color: white;
-      font-weight: 600;
-      border-radius: 12px;
-      cursor: pointer;
-      border: none;
-    }
-    .hd-btn { background: #ff9800; }
-    .sd-btn { background: #2196f3; }
-    .mp3-btn { background: #f44336; }
-
-    .footer-text { margin-top: 30px; font-size: 14px; opacity: 0.7; }
-    .contact-links {
-      margin-top: 20px;
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-    }
-    .contact-links a {
       background: rgba(255, 255, 255, 0.1);
-      color: white;
-      padding: 8px 15px;
-      border-radius: 20px;
+      padding: 20px;
+      border-radius: 15px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .contact-box a {
+      display: block;
+      margin: 10px 0;
+      background: white;
+      color: #4a00e0;
       text-decoration: none;
-      font-size: 13px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 10px;
+      border-radius: 20px;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -126,85 +109,69 @@
       <button class="paste-btn" onclick="pasteText()">Paste</button>
     </div>
     
-    <button class="fetch-btn" id="fetchBtn" onclick="fetchVideoData()">Get Video</button>
+    <button class="download-btn" id="dlBtn" onclick="handleDownload()">Download Now</button>
 
-    <div id="quality-options">
-      <p style="margin-bottom: 15px;">ভিডিওটি সেভ করতে বাটনে ক্লিক করুন:</p>
-      <button class="q-btn hd-btn" id="hdBtn">Download HD Video</button>
-      <button class="q-btn sd-btn" id="sdBtn">Download Normal Video</button>
-      <button class="q-btn mp3-btn" id="mp3Btn">Download MP3 Audio</button>
-    </div>
+    <div class="creator">Created by Sammim</div>
 
-    <div class="footer-text">Created by Sammim</div>
-    <div class="contact-links">
+    <div class="contact-box">
       <a href="https://t.me/sammim14" target="_blank">Telegram</a>
       <a href="https://www.facebook.com/share/1SD3SzGTyj/" target="_blank">Facebook</a>
     </div>
   </div>
 
   <script>
-    async function fetchVideoData() {
-      const url = document.getElementById("videoUrl").value;
-      const optionsDiv = document.getElementById("quality-options");
-      const fetchBtn = document.getElementById("fetchBtn");
+    async function handleDownload() {
+      const urlInput = document.getElementById("videoUrl").value;
+      const dlBtn = document.getElementById("dlBtn");
 
-      if (!url) return alert("লিঙ্ক দিন!");
+      if (!urlInput) return alert("Please paste a link first!");
 
-      fetchBtn.innerText = "Processing...";
-      fetchBtn.disabled = true;
+      dlBtn.innerText = "Finding Video...";
+      dlBtn.disabled = true;
 
       try {
-        const response = await fetch(`https://tikwm.com/api/?url=${encodeURIComponent(url)}`);
+        // API থেকে ভিডিওর লিংক সংগ্রহ করা
+        const response = await fetch(`https://tikwm.com/api/?url=${encodeURIComponent(urlInput)}`);
         const result = await response.json();
         
-        if (result.data) {
-          const data = result.data;
+        if (result.data && result.data.play) {
+          const videoUrl = result.data.play;
           
-          // বাটনগুলোতে ডাউনলোড ফাংশন সেট করা
-          setupDownload(document.getElementById("hdBtn"), data.hdplay || data.play, "tiktok_hd.mp4");
-          setupDownload(document.getElementById("sdBtn"), data.play, "tiktok_video.mp4");
-          setupDownload(document.getElementById("mp3Btn"), data.music, "tiktok_audio.mp3");
+          // এখানে আমরা সরাসরি ডাউনলোড লিংক ট্রিগার করছি
+          // এটি ব্রাউজারকে নির্দেশ দেয় ফাইলটি ডাউনলোড করতে, যাতে অ্যাপ থেকে বের হলেও ডাউনলোড না থামে
+          const downloadLink = document.createElement('a');
+          downloadLink.href = videoUrl;
+          downloadLink.setAttribute('download', ''); // সরাসরি ডাউনলোড নিশ্চিত করতে
+          downloadLink.style.display = 'none';
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          document.body.removeChild(downloadLink);
 
-          optionsDiv.style.display = "block";
+          dlBtn.innerText = "Downloading Started!";
+          
+          // ৩ সেকেন্ড পর বাটন আগের অবস্থায় ফিরে আসবে
+          setTimeout(() => {
+            dlBtn.innerText = "Download Now";
+            dlBtn.disabled = false;
+          }, 3000);
+
         } else {
-          alert("ভিডিও পাওয়া যায়নি!");
+          alert("Link incorrect or video not found.");
+          dlBtn.innerText = "Download Now";
+          dlBtn.disabled = false;
         }
       } catch (err) {
-        alert("সার্ভার সমস্যা, আবার চেষ্টা করুন।");
-      } finally {
-        fetchBtn.innerText = "Get Video";
-        fetchBtn.disabled = false;
+        alert("Server error. Please try again.");
+        dlBtn.innerText = "Download Now";
+        dlBtn.disabled = false;
       }
-    }
-
-    // সরাসরি ডাউনলোড করানোর ফাংশন
-    function setupDownload(element, fileUrl, fileName) {
-      element.onclick = async function() {
-        element.innerText = "Downloading...";
-        try {
-          const res = await fetch(fileUrl);
-          const blob = await res.blob();
-          const downloadUrl = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = downloadUrl;
-          a.download = fileName; // ফাইলটি এই নামে সেভ হবে
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-          window.URL.revokeObjectURL(downloadUrl);
-        } catch (e) {
-          // যদি সরাসরি ডাউনলোড ব্লক হয় তবে লিঙ্কে ওপেন করবে
-          window.open(fileUrl, '_blank');
-        } finally {
-          element.innerText = element.className.includes('hd-btn') ? "Download HD Video" : 
-                             element.className.includes('sd-btn') ? "Download Normal Video" : "Download MP3 Audio";
-        }
-      };
     }
 
     function pasteText() {
       navigator.clipboard.readText().then(text => {
         document.getElementById("videoUrl").value = text;
+      }).catch(() => {
+        alert("Please paste manually.");
       });
     }
   </script>
