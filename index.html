@@ -29,11 +29,7 @@
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.15);
     }
-    h1 {
-      font-size: 32px;
-      margin-bottom: 30px;
-      font-weight: 700;
-    }
+    h1 { font-size: 32px; margin-bottom: 30px; font-weight: 700; }
     .input-group {
       display: flex;
       background: white;
@@ -68,17 +64,9 @@
       font-weight: 700;
       cursor: pointer;
       box-shadow: 0 4px 15px rgba(0, 200, 83, 0.3);
-      transition: 0.3s;
     }
-    .download-btn:disabled {
-      background: #555;
-      cursor: not-allowed;
-    }
-    .creator {
-      margin-top: 40px;
-      font-size: 14px;
-      opacity: 0.7;
-    }
+    .status-text { margin-top: 15px; font-size: 14px; color: #64dd17; font-weight: bold; display: none; }
+    .creator { margin-top: 40px; font-size: 14px; opacity: 0.7; }
     .contact-box {
       margin-top: 30px;
       background: rgba(255, 255, 255, 0.1);
@@ -109,7 +97,8 @@
       <button class="paste-btn" onclick="pasteText()">Paste</button>
     </div>
     
-    <button class="download-btn" id="dlBtn" onclick="handleDownload()">Download Now</button>
+    <button class="download-btn" id="dlBtn" onclick="handleDownload()">Download Video</button>
+    <div id="status" class="status-text"></div>
 
     <div class="creator">Created by Sammim</div>
 
@@ -123,57 +112,70 @@
     async function handleDownload() {
       const urlInput = document.getElementById("videoUrl").value;
       const dlBtn = document.getElementById("dlBtn");
+      const status = document.getElementById("status");
 
       if (!urlInput) return alert("Please paste a link first!");
 
-      dlBtn.innerText = "Finding Video...";
       dlBtn.disabled = true;
+      status.style.display = "block";
+      status.innerText = "Finding video link...";
 
       try {
-        // API থেকে ভিডিওর লিংক সংগ্রহ করা
         const response = await fetch(`https://tikwm.com/api/?url=${encodeURIComponent(urlInput)}`);
         const result = await response.json();
         
         if (result.data && result.data.play) {
           const videoUrl = result.data.play;
+          status.innerText = "Starting Direct Download...";
           
-          // এখানে আমরা সরাসরি ডাউনলোড লিংক ট্রিগার করছি
-          // এটি ব্রাউজারকে নির্দেশ দেয় ফাইলটি ডাউনলোড করতে, যাতে অ্যাপ থেকে বের হলেও ডাউনলোড না থামে
-          const downloadLink = document.createElement('a');
-          downloadLink.href = videoUrl;
-          downloadLink.setAttribute('download', ''); // সরাসরি ডাউনলোড নিশ্চিত করতে
-          downloadLink.style.display = 'none';
-          document.body.appendChild(downloadLink);
-          downloadLink.click();
-          document.body.removeChild(downloadLink);
-
-          dlBtn.innerText = "Downloading Started!";
-          
-          // ৩ সেকেন্ড পর বাটন আগের অবস্থায় ফিরে আসবে
-          setTimeout(() => {
-            dlBtn.innerText = "Download Now";
-            dlBtn.disabled = false;
-          }, 3000);
-
+          await forceDownload(videoUrl, `TikTok_${Date.now()}.mp4`);
         } else {
-          alert("Link incorrect or video not found.");
-          dlBtn.innerText = "Download Now";
-          dlBtn.disabled = false;
+          throw new Error("Invalid Link");
         }
       } catch (err) {
-        alert("Server error. Please try again.");
-        dlBtn.innerText = "Download Now";
-        dlBtn.disabled = false;
+        status.innerText = "Error: Link invalid or connection lost. Retrying...";
+        setTimeout(handleDownload, 3000); // নেট না থাকলে ৩ সেকেন্ড পর আবার চেষ্টা করবে
+      }
+    }
+
+    async function forceDownload(fileUrl, fileName) {
+      const status = document.getElementById("status");
+      try {
+        const response = await fetch(fileUrl);
+        if (!response.ok) throw new Error("Network issues");
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+
+        status.innerText = "Download Successful!";
+        document.getElementById("dlBtn").disabled = false;
+      } catch (error) {
+        status.innerText = "Connection lost. Reconnecting...";
+        setTimeout(() => forceDownload(fileUrl, fileName), 3000); // নেট চলে গেলে পুনরায় লোড করবে
       }
     }
 
     function pasteText() {
       navigator.clipboard.readText().then(text => {
         document.getElementById("videoUrl").value = text;
-      }).catch(() => {
-        alert("Please paste manually.");
       });
     }
+
+    // অটোমেটিক অফলাইন ডিটেকশন
+    window.addEventListener('online', () => {
+      const status = document.getElementById("status");
+      if(status.innerText.includes("Connection lost")) {
+        status.innerText = "Internet is back! Resuming...";
+      }
+    });
   </script>
 </body>
 </html>
