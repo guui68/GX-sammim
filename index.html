@@ -4,85 +4,29 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TikTok Downloader</title>
-
 <style>
-body{
-  font-family: Arial, sans-serif;
-  background:#0f0f0f;
-  color:#fff;
-  display:flex;
-  justify-content:center;
-}
-.container{
-  width:100%;
-  max-width:420px;
-  padding:15px;
-}
-.input-group{
-  display:flex;
-  gap:6px;
-}
-input{
-  flex:1;
-  padding:10px;
-  border-radius:6px;
-  border:none;
-}
-button{
-  padding:10px;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-}
+body{font-family:Arial,sans-serif;background:#0f0f0f;color:#fff;display:flex;justify-content:center;}
+.container{width:100%;max-width:420px;padding:15px;}
+.input-group{display:flex;gap:6px;}
+input{flex:1;padding:10px;border-radius:6px;border:none;}
+button{padding:10px;border:none;border-radius:6px;cursor:pointer;}
 .clear-btn{background:#ff4d4d;color:#fff;}
 .paste-btn{background:#1da1f2;color:#fff;}
-
-#loader{
-  display:none;
-  margin:15px 0;
-  text-align:center;
-}
-
-#video-info{
-  display:none;
-  margin-top:15px;
-}
-.profile-section{
-  display:flex;
-  gap:10px;
-  align-items:center;
-}
-#user-logo{
-  width:50px;
-  height:50px;
-  border-radius:50%;
-}
-
-#quality-list{
-  display:none;
-  margin-top:15px;
-}
-.q-btn{
-  width:100%;
-  margin-top:8px;
-  font-size:15px;
-}
+#loader{display:none;margin:15px 0;text-align:center;}
+#video-info{display:none;margin-top:15px;}
+.profile-section{display:flex;gap:10px;align-items:center;}
+#user-logo{width:50px;height:50px;border-radius:50%;}
+#quality-list{display:none;margin-top:15px;}
+.q-btn{width:100%;margin-top:8px;font-size:15px;}
 .hd-btn{background:#00e676;}
 .sd-btn{background:#ffb300;}
 .mp3-btn{background:#ab47bc;}
-
-.creator, .contact-box{
-  text-align:center;
-  margin-top:15px;
-  font-size:13px;
-}
+.creator,.contact-box{text-align:center;margin-top:15px;font-size:13px;}
 a{color:#1da1f2;text-decoration:none;}
 </style>
 </head>
-
 <body>
 <div class="container">
-
   <div class="input-group">
     <input type="text" id="videoUrl" placeholder="Paste TikTok link here..." oninput="handleAutoProcess()">
     <button class="clear-btn" onclick="clearInput()">✕</button>
@@ -93,7 +37,7 @@ a{color:#1da1f2;text-decoration:none;}
 
   <div id="video-info">
     <div class="profile-section">
-      <img id="user-logo">
+      <img id="user-logo" alt="User Logo">
       <div>
         <h4 id="user-name"></h4>
         <p id="video-desc"></p>
@@ -113,64 +57,70 @@ a{color:#1da1f2;text-decoration:none;}
     <a href="https://t.me/sammim14" target="_blank">Telegram</a> |
     <a href="https://www.facebook.com/share/1SD3SzGTyj/" target="_blank">Facebook</a>
   </div>
-
 </div>
 
 <script>
-let hdUrl="", sdUrl="", mp3Url="";
+let HD_LINK = "";
+let SD_LINK = "";
+let MP3_LINK = "";
 
-async function handleAutoProcess(){
-  const url=document.getElementById("videoUrl").value.trim();
-  if(!url.includes("tiktok.com")) return;
+async function handleAutoProcess() {
+  const input = document.getElementById("videoUrl");
+  const url = input.value.trim();
+  if (!url || !url.includes("tiktok.com")) return;
 
-  document.getElementById("loader").style.display="block";
+  document.getElementById("loader").style.display = "block";
+  document.getElementById("quality-list").style.display = "none";
 
-  try{
-    const res=await fetch("https://tikwm.com/api/?url="+encodeURIComponent(url));
-    const json=await res.json();
+  try {
+    const api = "https://tikwm.com/api/?url=" + encodeURIComponent(url);
+    const res = await fetch(api);
+    const json = await res.json();
 
-    if(json.code!==0){
-      document.getElementById("loader").style.display="none";
+    if (json.code !== 0) {
+      document.getElementById("loader").style.display = "none";
       return;
     }
 
-    const v=json.data;
+    const v = json.data;
 
-    document.getElementById("video-info").style.display="block";
-    document.getElementById("user-logo").src=v.author.avatar;
-    document.getElementById("user-name").innerText=v.author.nickname;
-    document.getElementById("video-desc").innerText=v.title;
+    // আগের ডিজাইন একদম ঠিক রাখছি
+    document.getElementById("video-info").style.display = "block";
+    document.getElementById("user-logo").src = v.author.avatar;
+    document.getElementById("user-name").innerText = v.author.nickname;
+    document.getElementById("video-desc").innerText = v.title;
 
-    sdUrl=v.play;
-    hdUrl=v.hdplay;
-    mp3Url=v.music;
+    // আলাদা কোয়ালিটি
+    SD_LINK = v.play;    
+    HD_LINK = v.hdplay;  
+    MP3_LINK = v.music;  
 
-    document.getElementById("quality-list").style.display="block";
-    document.getElementById("status-text").innerText="Select quality 👇";
+    document.getElementById("status-text").innerText = "Ready to download";
+    document.getElementById("quality-list").style.display = "block";
 
-  }catch(e){
-    alert("Error loading video");
+  } catch (e) {
+    console.log(e);
   }
 
-  document.getElementById("loader").style.display="none";
+  document.getElementById("loader").style.display = "none";
 }
 
-hdBtn.onclick=()=>hdUrl && window.open(hdUrl,"_blank");
-sdBtn.onclick=()=>sdUrl && window.open(sdUrl,"_blank");
-mp3Btn.onclick=()=>mp3Url && window.open(mp3Url,"_blank");
+// সরাসরি ডাউনলোড (কোনো ডট/মেনু নেই)
+document.getElementById("hdBtn").onclick = () => { if(HD_LINK) location.href = HD_LINK; };
+document.getElementById("sdBtn").onclick = () => { if(SD_LINK) location.href = SD_LINK; };
+document.getElementById("mp3Btn").onclick = () => { if(MP3_LINK) location.href = MP3_LINK; };
 
-function clearInput(){
-  videoUrl.value="";
-  video-info?.style?.display==="none";
-  quality-list?.style?.display==="none";
+function clearInput() {
+  document.getElementById("videoUrl").value = "";
+  document.getElementById("video-info").style.display = "none";
+  document.getElementById("quality-list").style.display = "none";
 }
 
-async function pasteText(){
-  const t=await navigator.clipboard.readText();
-  videoUrl.value=t;
+async function pasteText() {
+  const t = await navigator.clipboard.readText();
+  document.getElementById("videoUrl").value = t;
   handleAutoProcess();
 }
 </script>
-
 </body>
 </html>
