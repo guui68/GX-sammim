@@ -10,53 +10,65 @@
       margin: 0; padding: 0;
       font-family: 'Poppins', sans-serif;
       background: linear-gradient(135deg, #1a0a2e 0%, #4a00e0 100%);
-      color: white;
-      text-align: center;
-      min-height: 100vh;
+      color: white; text-align: center; min-height: 100vh;
       display: flex; flex-direction: column; justify-content: center; align-items: center;
     }
     .container {
       background: rgba(255, 255, 255, 0.08);
-      border-radius: 20px; padding: 30px;
+      border-radius: 20px; padding: 25px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
       max-width: 450px; width: 92%;
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.15);
     }
-    h1 { font-size: 28px; margin-bottom: 25px; font-weight: 700; }
+    h1 { font-size: 26px; margin-bottom: 20px; font-weight: 700; }
     .input-group {
       display: flex; background: white; border-radius: 12px;
-      overflow: hidden; margin-bottom: 20px; position: relative;
+      overflow: hidden; margin-bottom: 15px; position: relative;
     }
     input[type="text"] {
-      flex-grow: 1; padding: 15px 45px 15px 15px;
-      border: none; font-size: 16px; outline: none; color: #333;
+      flex: 1; padding: 15px 45px 15px 15px;
+      border: none; font-size: 15px; outline: none; color: #333;
     }
     .clear-btn {
-      position: absolute; right: 85px; top: 50%; transform: translateY(-50%);
-      background: #ddd; color: #333; border-radius: 50%; width: 22px; height: 22px;
+      position: absolute; right: 80px; top: 50%; transform: translateY(-50%);
+      background: #ddd; color: #333; border-radius: 50%; width: 20px; height: 20px;
       display: flex; align-items: center; justify-content: center; cursor: pointer;
-      font-size: 12px; font-weight: bold; border: none; display: none;
+      font-size: 10px; border: none; display: none;
     }
     .paste-btn {
-      padding: 15px 18px; background: linear-gradient(to right, #e040fb, #7c4dff);
-      color: white; border: none; font-weight: 700; cursor: pointer;
+      padding: 0 15px; background: #7c4dff; color: white;
+      border: none; font-weight: 700; cursor: pointer;
     }
     .fetch-btn {
-      width: 100%; padding: 15px; background: linear-gradient(to right, #00c853, #64dd17);
-      color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: 700; cursor: pointer;
+      width: 100%; padding: 15px; background: #00c853;
+      color: white; border: none; border-radius: 12px;
+      font-size: 18px; font-weight: 700; cursor: pointer;
     }
-    #quality-list { margin-top: 25px; display: none; }
+    
+    /* Video Info Style */
+    #video-info { margin-top: 20px; display: none; text-align: left; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; }
+    #video-info h4 { margin: 0; color: #64dd17; }
+    #video-info p { margin: 5px 0 0; font-size: 14px; opacity: 0.9; }
+
+    #quality-list { margin-top: 20px; display: none; }
     .q-btn {
-      display: block; width: 100%; margin: 10px 0; padding: 14px;
-      text-decoration: none; color: white; font-weight: 600; border-radius: 10px;
-      font-size: 16px; border: none; cursor: pointer; transition: 0.3s;
+      display: block; width: 100%; margin: 8px 0; padding: 12px;
+      color: white; font-weight: 600; border-radius: 10px;
+      font-size: 15px; border: none; cursor: pointer; transition: 0.3s;
     }
     .hd-btn { background: #ff9800; }
     .sd-btn { background: #2196f3; }
     .mp3-btn { background: #f44336; }
-    #status-text { margin-top: 10px; font-size: 14px; color: #64dd17; font-weight: bold; }
-    .creator { margin-top: 30px; font-size: 14px; opacity: 0.8; }
+    #status-text { margin-top: 10px; font-size: 13px; color: #64dd17; font-weight: bold; }
+
+    .creator { margin-top: 25px; font-size: 14px; opacity: 0.7; }
+    .contact-box {
+      margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 12px;
+    }
+    .contact-box a {
+      margin: 0 10px; color: #fff; text-decoration: none; font-weight: bold; font-size: 14px;
+    }
   </style>
 </head>
 <body>
@@ -70,10 +82,14 @@
       <button class="paste-btn" onclick="pasteText()">Paste</button>
     </div>
     
-    <button class="fetch-btn" id="fetchBtn" onclick="getVideoOptions()">Get Download Links</button>
+    <button class="fetch-btn" id="fetchBtn" onclick="getVideoOptions()">Get Video</button>
+
+    <div id="video-info">
+      <h4 id="user-name"></h4>
+      <p id="video-desc"></p>
+    </div>
 
     <div id="quality-list">
-      <p style="margin-bottom:10px;">Select Quality to Download:</p>
       <div id="status-text"></div>
       <button class="q-btn hd-btn" id="hdBtn">Download HD Video</button>
       <button class="q-btn sd-btn" id="sdBtn">Download Normal Video</button>
@@ -81,6 +97,10 @@
     </div>
 
     <div class="creator">Created by GX Sammim</div>
+    <div class="contact-box">
+      <a href="https://t.me/sammim14" target="_blank">Telegram</a> | 
+      <a href="https://www.facebook.com/share/1SD3SzGTyj/" target="_blank">Facebook</a>
+    </div>
   </div>
 
   <script>
@@ -93,6 +113,7 @@
     function clearInput() {
       document.getElementById("videoUrl").value = "";
       document.getElementById("quality-list").style.display = "none";
+      document.getElementById("video-info").style.display = "none";
       toggleClearBtn();
     }
 
@@ -107,6 +128,7 @@
       const urlInput = document.getElementById("videoUrl").value;
       const fetchBtn = document.getElementById("fetchBtn");
       const qualityList = document.getElementById("quality-list");
+      const videoInfo = document.getElementById("video-info");
 
       if (!urlInput) return alert("Please paste a link first!");
 
@@ -120,20 +142,25 @@
         if (result.data) {
           const data = result.data;
           
-          // Force Download Functionality
+          // অ্যাকাউন্টের নাম ও টাইটেল সেট করা
+          document.getElementById("user-name").innerText = "@" + (data.author.nickname || "User");
+          document.getElementById("video-desc").innerText = data.title || "No Title";
+          videoInfo.style.display = "block";
+
+          // সরাসরি ডাউনলোড মেথড সেট করা
           setupForceDownload(document.getElementById("hdBtn"), data.hdplay || data.play, "GX_Sammim_HD.mp4");
           setupForceDownload(document.getElementById("sdBtn"), data.play, "GX_Sammim_Normal.mp4");
           setupForceDownload(document.getElementById("mp3Btn"), data.music, "GX_Sammim_Audio.mp3");
 
           qualityList.style.display = "block";
-          fetchBtn.innerText = "Links Ready!";
+          fetchBtn.innerText = "Get Video";
         } else {
           alert("Video not found.");
-          fetchBtn.innerText = "Get Download Links";
+          fetchBtn.innerText = "Get Video";
         }
       } catch (err) {
         alert("Server error.");
-        fetchBtn.innerText = "Get Download Links";
+        fetchBtn.innerText = "Get Video";
       } finally {
         fetchBtn.disabled = false;
       }
@@ -143,27 +170,24 @@
       btn.onclick = async function() {
         const status = document.getElementById("status-text");
         const originalText = btn.innerText;
-        
         btn.innerText = "Downloading...";
         btn.disabled = true;
-        status.innerText = "Please wait, saving to gallery...";
+        status.innerText = "Saving to gallery, please wait...";
 
         try {
           const response = await fetch(fileUrl);
           const blob = await response.blob();
           const url = window.URL.createObjectURL(blob);
-          
           const a = document.createElement('a');
           a.href = url;
           a.download = fileName;
           document.body.appendChild(a);
           a.click();
-          
           window.URL.revokeObjectURL(url);
           document.body.removeChild(a);
-          status.innerText = "Download Started!";
+          status.innerText = "Download successful!";
         } catch (e) {
-          window.open(fileUrl, '_blank'); // Backup if fetch fails
+          window.open(fileUrl, '_blank');
         } finally {
           btn.innerText = originalText;
           btn.disabled = false;
