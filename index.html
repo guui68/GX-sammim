@@ -4,115 +4,176 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>XG Sammim TikTok Downloader</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
       padding: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #8e2de2, #4a00e0);
+      font-family: 'Poppins', sans-serif; /* Poppins ফন্ট ব্যবহার করা হয়েছে */
+      background: linear-gradient(to bottom right, #4a00e0, #8e2de2); /* গভীর বেগুনি ব্যাকগ্রাউন্ড */
       color: white;
       text-align: center;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
     .container {
-      margin-top: 80px;
-      padding: 20px;
+      background: rgba(255, 255, 255, 0.08); /* সেমি-ট্রান্সপারেন্ট ব্যাকগ্রাউন্ড */
+      border-radius: 20px; /* আরও গোলাকার কোণা */
+      padding: 40px 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); /* গভীর শ্যাডো */
+      max-width: 500px;
+      width: 90%;
+      backdrop-filter: blur(10px); /* ব্লার ইফেক্ট */
+      border: 1px solid rgba(255, 255, 255, 0.15); /* হালকা বর্ডার */
     }
     h1 {
-      font-size: 28px;
+      font-size: 36px;
+      margin-bottom: 30px;
+      font-weight: 700;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* টাইটেলে শ্যাডো */
+    }
+    .input-group {
+      display: flex; /* ইনপুট এবং বাটন পাশাপাশি রাখতে */
+      justify-content: center;
       margin-bottom: 20px;
     }
-    .input-box {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      padding: 10px;
-      display: inline-block;
-    }
     input[type="text"] {
-      width: 250px;
-      padding: 10px;
+      flex-grow: 1; /* ইনপুট ফিল্ড যতটা সম্ভব জায়গা নেবে */
+      padding: 14px 18px;
       border: none;
-      border-radius: 6px;
-      font-size: 16px;
+      border-radius: 10px 0 0 10px; /* পেস্ট বাটনের সাথে মিশে যাওয়ার জন্য */
+      font-size: 17px;
       outline: none;
+      background: rgba(255, 255, 255, 0.95); /* প্রায় সাদা ব্যাকগ্রাউন্ড */
+      color: #333;
+    }
+    input[type="text"]::placeholder {
+      color: #888;
     }
     .paste-btn {
-      padding: 10px 16px;
-      background-color: white;
-      color: #4a00e0;
+      padding: 14px 20px;
+      background: linear-gradient(to right, #e040fb, #7c4dff); /* আগের মতোই রঙিন */
+      color: white;
       border: none;
-      border-radius: 6px;
-      font-weight: bold;
+      border-radius: 0 10px 10px 0; /* ইনপুট ফিল্ডের সাথে মিলিয়ে */
+      font-weight: 600;
+      font-size: 17px;
       cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
     }
-    .download-btn {
-      margin-top: 20px;
-      padding: 12px 60px;
-      background: linear-gradient(to right, #e040fb, #7c4dff);
+    .paste-btn:hover {
+      background: linear-gradient(to right, #7c4dff, #e040fb);
+      transform: translateY(-2px);
+    }
+
+    .fetch-btn {
+      width: 100%;
+      padding: 15px 0;
+      background: linear-gradient(to right, #00c853, #64dd17); /* সবুজ গেট ভিডিও বাটন */
       color: white;
       border: none;
       border-radius: 10px;
-      font-size: 18px;
-      font-weight: bold;
+      font-size: 20px;
+      font-weight: 700;
       cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+      margin-top: 15px;
     }
-    
+    .fetch-btn:hover {
+      background: linear-gradient(to right, #64dd17, #00c853);
+      transform: translateY(-2px);
+    }
+    .fetch-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+    }
+
     /* Quality Options Style */
     #quality-options {
-      margin-top: 25px;
+      margin-top: 30px;
       display: none; /* শুরুতে লুকানো থাকবে */
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    #quality-options h3 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        font-weight: 600;
     }
     .q-btn {
       display: block;
-      width: 200px;
-      margin: 10px auto;
-      padding: 12px;
+      width: calc(100% - 20px); /* Padding হিসাব করে */
+      margin: 15px auto;
+      padding: 15px 0;
       text-decoration: none;
       color: white;
-      font-weight: bold;
-      border-radius: 8px;
-      transition: 0.3s;
+      font-weight: 600;
+      font-size: 18px;
+      border-radius: 10px;
+      transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
-    .hd-btn { background: #ff9800; }
-    .sd-btn { background: #2196f3; }
-    .mp3-btn { background: #f44336; }
+    .q-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+    }
+    .hd-btn { background: linear-gradient(to right, #ff9800, #ffc107); } /* কমলা */
+    .hd-btn:hover { background: linear-gradient(to right, #ffc107, #ff9800); }
+    .sd-btn { background: linear-gradient(to right, #2196f3, #03a9f4); } /* নীল */
+    .sd-btn:hover { background: linear-gradient(to right, #03a9f4, #2196f3); }
+    .mp3-btn { background: linear-gradient(to right, #f44336, #e53935); } /* লাল */
+    .mp3-btn:hover { background: linear-gradient(to right, #e53935, #f44336); }
 
     .creator {
-      margin-top: 30px;
-      font-size: 18px;
+      margin-top: 40px;
+      font-size: 16px;
+      opacity: 0.8;
     }
     .contact-box {
       margin-top: 40px;
-      background-color: rgba(0, 0, 0, 0.3);
-      padding: 20px;
-      border-radius: 10px;
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 25px;
+      border-radius: 15px;
       display: inline-block;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
     .contact-box h3 {
       margin-bottom: 20px;
-      font-size: 20px;
-      text-shadow: 1px 1px 2px black;
+      font-size: 22px;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
     }
     .contact-box a {
       display: block;
-      margin: 10px 0;
-      background: #d1c4e9;
-      color: #000;
+      margin: 12px 0;
+      background: rgba(255, 255, 255, 0.9);
+      color: #4a00e0; /* বেগুনি টেক্সট */
       text-decoration: none;
-      padding: 10px;
-      border-radius: 20px;
-      font-weight: bold;
+      padding: 12px;
+      border-radius: 25px;
+      font-weight: 600;
+      transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .contact-box a:hover {
+      background: #e0e0e0;
+      color: #8e2de2;
+      transform: translateY(-2px);
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>TikTok Video Downloader</h1>
-    <div class="input-box">
-      <input type="text" id="videoUrl" placeholder="Just insert a link">
+    <div class="input-group">
+      <input type="text" id="videoUrl" placeholder="Paste TikTok video link here...">
       <button class="paste-btn" onclick="pasteText()">Paste</button>
     </div>
-    <br>
-    <button class="download-btn" id="fetchBtn" onclick="fetchVideoData()">Get Video</button>
+    
+    <button class="fetch-btn" id="fetchBtn" onclick="fetchVideoData()">Get Video</button>
 
     <div id="quality-options">
       <h3>Select Quality:</h3>
@@ -136,9 +197,14 @@
       const optionsDiv = document.getElementById("quality-options");
       const fetchBtn = document.getElementById("fetchBtn");
 
-      if (!url) return alert("Please insert a TikTok link.");
+      if (!url) {
+        alert("Please insert a TikTok link.");
+        return;
+      }
 
       fetchBtn.innerText = "Processing...";
+      fetchBtn.disabled = true; // প্রসেসিং চলাকালীন বাটন ডিসেবল থাকবে
+      optionsDiv.style.display = "none"; // নতুন সার্চের আগে অপশনগুলো লুকানো থাকবে
       
       try {
         const response = await fetch(`https://tikwm.com/api/?url=${encodeURIComponent(url)}`);
@@ -147,31 +213,41 @@
         if (result.data) {
           const data = result.data;
           
-          // লিঙ্কগুলো বাটনে সেট করা
-          document.getElementById("hdLink").href = data.hdplay || data.play;
+          document.getElementById("hdLink").href = data.hdplay || data.play; // HD না থাকলে normal play লিংক ব্যবহার করবে
           document.getElementById("sdLink").href = data.play;
           document.getElementById("mp3Link").href = data.music;
 
-          // অপশনগুলো প্রদর্শন করা
-          optionsDiv.style.display = "block";
+          optionsDiv.style.display = "block"; // অপশনগুলো প্রদর্শন করা
           fetchBtn.innerText = "Get Video";
+          fetchBtn.disabled = false; // প্রসেসিং শেষ হলে বাটন এনাবল হবে
         } else {
-          alert("Could not find video. Check the link.");
+          alert("Could not find video. Check the link or try again later.");
           fetchBtn.innerText = "Get Video";
+          fetchBtn.disabled = false;
         }
       } catch (err) {
         alert("Something went wrong. Please try again later.");
+        console.error(err);
         fetchBtn.innerText = "Get Video";
+        fetchBtn.disabled = false;
       }
     }
 
     function pasteText() {
       navigator.clipboard.readText().then(text => {
         document.getElementById("videoUrl").value = text;
+        document.getElementById("quality-options").style.display = "none"; // পেস্ট করার পর অপশনগুলো লুকানো
       }).catch(() => {
         alert("Clipboard access denied. Please paste manually.");
       });
     }
+
+    // ইনপুট ফিল্ডে কিছু লিখলে বাটনগুলো লুকানোর জন্য
+    document.getElementById("videoUrl").addEventListener("input", function() {
+        document.getElementById("quality-options").style.display = "none";
+    });
+
   </script>
 </body>
 </html>
+
