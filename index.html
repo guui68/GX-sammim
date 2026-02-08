@@ -21,7 +21,7 @@
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.15);
     }
-    h1 { font-size: 26px; margin-bottom: 20px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+    h1 { font-size: 26px; margin-bottom: 20px; font-weight: 700; }
     
     .input-group {
       display: flex; background: white; border-radius: 12px;
@@ -42,41 +42,48 @@
       border: none; font-weight: 700; cursor: pointer;
     }
 
-    /* User Profile & Info Display */
+    #loader { display: none; margin-top: 10px; color: #00c853; font-weight: bold; }
+
+    /* Profile Card Design */
     #video-info { 
       margin-top: 15px; display: none; background: rgba(0,0,0,0.3); 
       padding: 15px; border-radius: 12px; text-align: left;
-      animation: fadeIn 0.5s ease;
+      border: 1px solid rgba(255,255,255,0.1);
     }
     .profile-section { display: flex; align-items: center; gap: 12px; }
-    #user-logo { width: 50px; height: 50px; border-radius: 50%; border: 2px solid #64dd17; object-fit: cover; }
+    #user-logo { width: 55px; height: 55px; border-radius: 50%; border: 2px solid #64dd17; object-fit: cover; background: #222; }
     .user-details h4 { margin: 0; color: #64dd17; font-size: 15px; }
-    .user-details p { margin: 2px 0 0; font-size: 12px; opacity: 0.8; line-height: 1.3; }
+    .user-details p { margin: 2px 0 0; font-size: 12px; opacity: 0.8; line-height: 1.3; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 
-    /* Quality Buttons Section */
-    #quality-list { margin-top: 15px; display: none; animation: fadeIn 0.5s ease; }
+    /* Single Line Progress System */
+    .progress-wrapper {
+      margin-top: 20px; display: none; background: rgba(255,255,255,0.05); 
+      padding: 15px; border-radius: 12px;
+    }
+    #status-text { font-size: 18px; color: #64dd17; font-weight: bold; margin-bottom: 8px; }
+    .progress-container {
+      width: 100%; height: 10px; background: rgba(255,255,255,0.2);
+      border-radius: 10px; overflow: hidden;
+    }
+    .progress-bar { width: 0%; height: 100%; background: #64dd17; box-shadow: 0 0 15px #64dd17; transition: width 0.1s linear; }
+
+    /* Quality Buttons */
+    #quality-list { margin-top: 20px; display: none; }
     .q-btn {
-      display: block; width: 100%; margin: 8px 0; padding: 12px;
+      display: block; width: 100%; margin: 10px 0; padding: 14px;
       color: white; font-weight: 600; border-radius: 10px;
-      font-size: 15px; border: none; cursor: pointer; transition: 0.3s;
+      font-size: 16px; border: none; cursor: pointer; transition: 0.3s;
     }
     .hd-btn { background: #ff9800; }
     .sd-btn { background: #2196f3; }
     .mp3-btn { background: #f44336; }
-    #status-text { margin-top: 10px; font-size: 13px; color: #64dd17; font-weight: bold; }
+    .q-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
-    /* Contact & Footer */
-    .creator { margin-top: 25px; font-size: 14px; opacity: 0.7; }
+    .creator { margin-top: 30px; font-size: 14px; opacity: 0.7; }
     .contact-box {
-      margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 12px;
+      margin-top: 15px; padding: 12px; background: rgba(255,255,255,0.1); border-radius: 12px;
     }
-    .contact-box a {
-      margin: 0 10px; color: #fff; text-decoration: none; font-weight: bold; font-size: 14px;
-    }
-    
-    #loader { display: none; margin-top: 10px; color: #00c853; font-weight: bold; font-size: 14px; }
-    
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    .contact-box a { margin: 0 10px; color: #fff; text-decoration: none; font-weight: bold; font-size: 14px; }
   </style>
 </head>
 <body>
@@ -85,16 +92,16 @@
     <h1>TikTok Downloader</h1>
     
     <div class="input-group">
-      <input type="text" id="videoUrl" placeholder="Paste TikTok link here..." oninput="handleAutoProcess()">
+      <input type="text" id="videoUrl" placeholder="Paste link here..." oninput="handleInput()">
       <button class="clear-btn" id="clearBtn" onclick="clearInput()">✕</button>
-      <button class="paste-btn" onclick="pasteText()">Paste</button>
+      <button class="paste-btn" onclick="manualPaste()">Paste</button>
     </div>
 
-    <div id="loader">🔄 Processing Video...</div>
+    <div id="loader">⚡ Fetching Details...</div>
 
     <div id="video-info">
       <div class="profile-section">
-        <img id="user-logo" src="" alt="User Logo">
+        <img id="user-logo" src="" alt="User Profile">
         <div class="user-details">
           <h4 id="user-name"></h4>
           <p id="video-desc"></p>
@@ -102,8 +109,14 @@
       </div>
     </div>
 
+    <div class="progress-wrapper" id="prog-wrapper">
+      <div id="status-text">0%</div>
+      <div class="progress-container">
+        <div class="progress-bar" id="p-bar"></div>
+      </div>
+    </div>
+
     <div id="quality-list">
-      <div id="status-text"></div>
       <button class="q-btn hd-btn" id="hdBtn">Download HD Video</button>
       <button class="q-btn sd-btn" id="sdBtn">Download Normal Video</button>
       <button class="q-btn mp3-btn" id="mp3Btn">Download MP3 Audio</button>
@@ -117,7 +130,6 @@
   </div>
 
   <script>
-    // ইনপুট বক্সের X বাটন কন্ট্রোল
     function toggleClearBtn() {
       const input = document.getElementById("videoUrl");
       const clearBtn = document.getElementById("clearBtn");
@@ -129,31 +141,30 @@
       document.getElementById("quality-list").style.display = "none";
       document.getElementById("video-info").style.display = "none";
       document.getElementById("loader").style.display = "none";
+      document.getElementById("prog-wrapper").style.display = "none";
       toggleClearBtn();
     }
 
-    // অটো প্রসেস লজিক
-    function handleAutoProcess() {
+    function handleInput() {
       const url = document.getElementById("videoUrl").value;
       toggleClearBtn();
-      if (url.includes("tiktok.com")) {
-        getVideoData(url);
-      }
+      if (url.includes("tiktok.com")) { startProcessing(url); }
     }
 
-    function pasteText() {
-      navigator.clipboard.readText().then(text => {
+    async function manualPaste() {
+      try {
+        const text = await navigator.clipboard.readText();
         document.getElementById("videoUrl").value = text;
-        handleAutoProcess();
-      });
+        toggleClearBtn();
+        if (text.includes("tiktok.com")) { startProcessing(text); }
+      } catch (err) { alert("Please paste the link manually."); }
     }
 
-    async function getVideoData(urlInput) {
+    async function startProcessing(urlInput) {
       const loader = document.getElementById("loader");
       const videoInfo = document.getElementById("video-info");
       const qualityList = document.getElementById("quality-list");
 
-      // রিসেট
       videoInfo.style.display = "none";
       qualityList.style.display = "none";
       loader.style.display = "block";
@@ -165,41 +176,59 @@
         if (result.data) {
           const data = result.data;
           
-          // প্রোফাইল ও টাইটেল আপডেট
-          document.getElementById("user-logo").src = data.author.avatar || "https://www.w3schools.com/howto/img_avatar.png";
-          document.getElementById("user-name").innerText = "@" + (data.author.nickname || "TikTok User");
-          document.getElementById("video-desc").innerText = data.title || "TikTok Video By Sammim";
+          // Pre-loading logo for speed
+          const img = new Image();
+          img.src = data.author.avatar;
+          img.onload = () => {
+            document.getElementById("user-logo").src = img.src;
+            document.getElementById("user-name").innerText = "@" + (data.author.nickname || "TikTok User");
+            document.getElementById("video-desc").innerText = data.title || "No Title Provided";
+            loader.style.display = "none";
+            videoInfo.style.display = "block";
+            qualityList.style.display = "block";
+          };
 
-          loader.style.display = "none";
-          videoInfo.style.display = "block";
-
-          // বাটনগুলোতে সরাসরি ডাউনলোড সেট করা
           setupDownload(document.getElementById("hdBtn"), data.hdplay || data.play, "GX_Sammim_HD.mp4");
           setupDownload(document.getElementById("sdBtn"), data.play, "GX_Sammim_Normal.mp4");
           setupDownload(document.getElementById("mp3Btn"), data.music, "GX_Sammim_Audio.mp3");
 
-          qualityList.style.display = "block";
-        } else {
-          loader.innerText = "❌ Video not found!";
-        }
-      } catch (err) {
-        loader.innerText = "❌ Network Error! Please try again.";
-      }
+        } else { loader.innerText = "❌ Invalid Video Link!"; }
+      } catch (err) { loader.innerText = "❌ Network Error!"; }
     }
 
-    // ডিরেক্ট ডাউনলোড ফাংশন (থ্রি-ডট আসবে না)
     async function setupDownload(btn, fileUrl, fileName) {
       btn.onclick = async function() {
         const status = document.getElementById("status-text");
-        const originalText = btn.innerText;
+        const pBar = document.getElementById("p-bar");
+        const progWrapper = document.getElementById("prog-wrapper");
         
-        btn.innerText = "📥 Downloading...";
         btn.disabled = true;
-        status.innerText = "Saving to your device... please wait.";
+        progWrapper.style.display = "block";
+        status.innerText = "0%";
+        pBar.style.width = "0%";
 
         try {
           const response = await fetch(fileUrl);
-          const blob = await response.blob();
+          const reader = response.body.getReader();
+          const contentLength = +response.headers.get('Content-Length');
+          
+          let receivedLength = 0;
+          let chunks = []; 
+          
+          while(true) {
+            const {done, value} = await reader.read();
+            if (done) break;
+            chunks.push(value);
+            receivedLength += value.length;
+            
+            if (contentLength) {
+              let percent = Math.round((receivedLength / contentLength) * 100);
+              status.innerText = percent + "%";
+              pBar.style.width = percent + "%";
+            }
+          }
+
+          const blob = new Blob(chunks);
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
@@ -208,15 +237,15 @@
           a.click();
           window.URL.revokeObjectURL(url);
           document.body.removeChild(a);
-          status.innerText = "✅ Download Finished!";
+          
+          status.innerText = "Download Finished! ✅";
         } catch (e) {
           window.open(fileUrl, '_blank');
         } finally {
           setTimeout(() => {
-            btn.innerText = originalText;
             btn.disabled = false;
-            status.innerText = "";
-          }, 3000);
+            progWrapper.style.display = "none";
+          }, 3500);
         }
       };
     }
