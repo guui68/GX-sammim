@@ -41,7 +41,7 @@
     }
     input[type="text"] {
       flex-grow: 1;
-      padding: 15px 40px 15px 15px;
+      padding: 15px 45px 15px 15px;
       border: none;
       font-size: 16px;
       outline: none;
@@ -49,21 +49,22 @@
     }
     .clear-btn {
       position: absolute;
-      right: 85px; /* Paste বাটনের আগে */
+      right: 90px;
       top: 50%;
       transform: translateY(-50%);
-      background: #eee;
+      background: #ddd;
       color: #333;
       border-radius: 50%;
-      width: 25px;
-      height: 25px;
+      width: 22px;
+      height: 22px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      font-size: 12px;
       font-weight: bold;
       border: none;
-      display: none; /* শুরুতে লুকানো */
+      display: none;
     }
     .paste-btn {
       padding: 15px 20px;
@@ -87,9 +88,8 @@
       box-shadow: 0 4px 15px rgba(0, 200, 83, 0.3);
     }
 
-    /* Progress Bar Style */
     #progress-container {
-      margin-top: 20px;
+      margin-top: 25px;
       display: none;
     }
     .progress-bg {
@@ -103,11 +103,11 @@
       height: 100%;
       width: 0%;
       background: #64dd17;
-      transition: width 0.1s;
+      transition: width 0.1s linear;
     }
-    #status-text { margin-top: 10px; font-size: 14px; font-weight: bold; }
+    #status-text { margin-top: 10px; font-size: 15px; font-weight: 600; color: #64dd17; }
 
-    .creator { margin-top: 40px; font-size: 14px; opacity: 0.7; }
+    .creator { margin-top: 40px; font-size: 14px; opacity: 0.8; }
     .contact-box {
       margin-top: 25px;
       background: rgba(255, 255, 255, 0.1);
@@ -139,13 +139,13 @@
       <button class="paste-btn" onclick="pasteText()">Paste</button>
     </div>
     
-    <button class="download-btn" id="dlBtn" onclick="handleDownload()">Download Video</button>
+    <button class="download-btn" id="dlBtn" onclick="handleDownload()">Download HD Now</button>
 
     <div id="progress-container">
       <div class="progress-bg">
         <div id="progressBar" class="progress-bar"></div>
       </div>
-      <div id="status-text">0% Downloading...</div>
+      <div id="status-text">Preparing HD Download...</div>
     </div>
 
     <div class="creator">Created by Sammim</div>
@@ -168,6 +168,13 @@
       toggleClearBtn();
     }
 
+    function pasteText() {
+      navigator.clipboard.readText().then(text => {
+        document.getElementById("videoUrl").value = text;
+        toggleClearBtn();
+      });
+    }
+
     async function handleDownload() {
       const urlInput = document.getElementById("videoUrl").value;
       const dlBtn = document.getElementById("dlBtn");
@@ -178,20 +185,21 @@
 
       dlBtn.disabled = true;
       progCon.style.display = "block";
-      statusText.innerText = "Finding video link...";
+      statusText.innerText = "Connecting to TikTok HD Server...";
 
       try {
         const response = await fetch(`https://tikwm.com/api/?url=${encodeURIComponent(urlInput)}`);
         const result = await response.json();
         
-        if (result.data && result.data.play) {
-          const videoUrl = result.data.play;
+        if (result.data) {
+          // HD ভিডিও চেক করা, না থাকলে নরমাল প্লে
+          const videoUrl = result.data.hdplay || result.data.play;
           await downloadWithProgress(videoUrl);
         } else {
-          throw new Error("Invalid Link");
+          throw new Error("Video not found");
         }
       } catch (err) {
-        alert("Error: Link invalid or connection lost. Try again.");
+        alert("Error: Link invalid or network issue. Retrying...");
         resetUI();
       }
     }
@@ -202,7 +210,7 @@
 
       try {
         const response = await fetch(url);
-        if (!response.ok) throw new Error("Network error");
+        if (!response.ok) throw new Error("Connection failed");
 
         const contentLength = response.headers.get('content-length');
         const total = parseInt(contentLength, 10);
@@ -220,7 +228,7 @@
           if (total) {
             const percent = Math.round((loaded / total) * 100);
             progressBar.style.width = percent + "%";
-            statusText.innerText = percent + "% Downloading...";
+            statusText.innerText = "Downloading HD: " + percent + "%";
           }
         }
 
@@ -228,17 +236,21 @@
         const downloadUrl = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = downloadUrl;
-        a.download = `TikTok_${Date.now()}.mp4`;
+        
+        // ফাইলের নাম GX Sammim সেট করা হয়েছে
+        const timestamp = Math.floor(Date.now() / 1000);
+        a.download = `GX_Sammim_${timestamp}.mp4`;
+        
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         
-        statusText.innerText = "Download Complete!";
+        statusText.innerText = "HD Download Finished!";
         setTimeout(resetUI, 3000);
 
       } catch (error) {
-        statusText.innerText = "Connection lost. Reconnecting...";
-        setTimeout(() => downloadWithProgress(url), 3000);
+        statusText.innerText = "Network slow. Trying to reconnect...";
+        setTimeout(() => downloadWithProgress(url), 2000);
       }
     }
 
@@ -246,13 +258,7 @@
       document.getElementById("dlBtn").disabled = false;
       document.getElementById("progress-container").style.display = "none";
       document.getElementById("progressBar").style.width = "0%";
-    }
-
-    function pasteText() {
-      navigator.clipboard.readText().then(text => {
-        document.getElementById("videoUrl").value = text;
-        toggleClearBtn();
-      });
+      document.getElementById("status-text").innerText = "Preparing...";
     }
   </script>
 </body>
