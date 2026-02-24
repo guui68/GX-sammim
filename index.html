@@ -9,7 +9,7 @@
         :root {
             --primary: #00f2fe;
             --accent: #00ffa3;
-            --bg: #020617; /* প্রিমিয়াম ডিপ ব্লু ব্যাকগ্রাউন্ড */
+            --bg: #020617; 
             --card-bg: rgba(255, 255, 255, 0.05);
             --border: rgba(255, 255, 255, 0.1);
         }
@@ -18,7 +18,6 @@
             margin: 0; padding: 20px;
             font-family: 'Outfit', sans-serif;
             background-color: var(--bg);
-            /* শ্যাডোর পিছনে নীল গ্লো */
             background-image: 
                 radial-gradient(circle at 50% 50%, rgba(30, 64, 175, 0.3) 0%, transparent 70%),
                 radial-gradient(circle at 0% 0%, rgba(0, 242, 254, 0.1) 0%, transparent 40%);
@@ -66,7 +65,6 @@
             transition: 0.3s;
         }
 
-        /* লোডিং বার - ইনপুট এর ঠিক নিচে */
         .loader-container {
             display: none; margin-top: 20px; text-align: left;
         }
@@ -74,7 +72,6 @@
         .bar-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
         .bar-fill { width: 0%; height: 100%; background: var(--primary); transition: 0.3s; }
 
-        /* লিঙ্ক ও ক্লোজ ডিসপ্লে */
         #info-box {
             display: none; background: rgba(0,0,0,0.3); padding: 12px; 
             border-radius: 15px; margin: 20px 0; border: 1px solid var(--primary);
@@ -101,6 +98,7 @@
         .dl-btn {
             padding: 13px; border: none; border-radius: 15px;
             font-weight: 700; font-size: 13px; cursor: pointer; color: white;
+            text-align: center; text-decoration: none; display: block;
         }
         .btn-s1 { background: #2563eb; }
         .btn-s2 { background: #7c3aed; }
@@ -191,17 +189,12 @@
         } catch(e) {
             updateLoader("সার্ভার ১ ব্যস্ত, সার্ভার ২ ট্রাই করছি...", 60);
             try {
-                const r2 = await fetch(`https://api.tiklydown.eu.org/api/download?url=${encodeURIComponent(currentUrl)}`);
+                // সার্ভার ২ এর জন্য উন্নত এপিআই মেথড
+                const r2 = await fetch(`https://www.tikwm.com/api/?url=${encodeURIComponent(currentUrl)}`);
                 const j2 = await r2.json();
-                if(j2.result) {
-                    const d = {
-                        author: { avatar: j2.result.author.avatar, nickname: j2.result.author.nickname },
-                        title: j2.result.title,
-                        play: j2.result.video.noWatermark,
-                        music: j2.result.music.play_url
-                    };
-                    showFinal(d);
-                } else { alert("সার্ভার ডাউন!"); reset(); }
+                if(j2.data) {
+                    showFinal(j2.data);
+                } else { alert("দুঃখিত, কোনো সার্ভার কাজ করছে না!"); reset(); }
             } catch(err) { alert("Error!"); reset(); }
         }
     }
@@ -219,29 +212,42 @@
             document.getElementById("user-name").innerText = "@" + data.author.nickname;
             document.getElementById("video-title").innerText = data.title || "TikTok Video";
             
+            const videoLink = data.play;
+            const musicLink = data.music;
+
             const btnBox = document.getElementById("dl-buttons");
             btnBox.innerHTML = `
-                <button class="dl-btn btn-s1" onclick="download('${data.play}', 'S1.mp4')">🚀 ডাউনলোড ১ (Server 1)</button>
-                <button class="dl-btn btn-s2" onclick="download('${data.play}', 'S2.mp4')">📥 ডাউনলোড ২ (Server 2)</button>
-                <button class="dl-btn btn-browser" onclick="window.open('${data.play}', '_blank')">🌐 ব্রাউজার ডাউনলোড</button>
-                <button class="dl-btn btn-mp3" onclick="download('${data.music}', 'Music.mp3')">🎵 অডিও ডাউনলোড (MP3)</button>
+                <button class="dl-btn btn-s1" onclick="downloadFile('${videoLink}', 'Video_S1.mp4')">🚀 ডাউনলোড ১ (Server 1)</button>
+                <button class="dl-btn btn-s2" onclick="downloadFile('${videoLink}', 'Video_S2.mp4')">📥 ডাউনলোড ২ (Server 2)</button>
+                <a href="${videoLink}" target="_blank" class="dl-btn btn-browser">🌐 ব্রাউজার ডাউনলোড</a>
+                <button class="dl-btn btn-mp3" onclick="downloadFile('${musicLink}', 'Music.mp3')">🎵 অডিও ডাউনলোড (MP3)</button>
             `;
             document.getElementById("result-area").style.display = "block";
         }, 500);
     }
 
-    async function download(u, n) {
-        updateLoader("ডাউনলোড শুরু হচ্ছে...", 50);
+    async function downloadFile(url, name) {
+        updateLoader("ফাইল প্রস্তুত হচ্ছে...", 50);
         document.getElementById("loadingBox").style.display = "block";
+        
         try {
-            const r = await fetch(u);
-            const b = await r.blob();
+            const response = await fetch(url);
+            const blob = await response.blob();
+            const downloadUrl = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.href = URL.createObjectURL(b);
-            a.download = n; a.click();
-            updateLoader("সফল!", 100);
-            setTimeout(() => document.getElementById("loadingBox").style.display = "none", 1500);
-        } catch(e) { window.open(u, '_blank'); }
+            a.style.display = 'none';
+            a.href = downloadUrl;
+            a.download = name;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(downloadUrl);
+            updateLoader("ডাউনলোড সফল!", 100);
+            setTimeout(() => { document.getElementById("loadingBox").style.display = "none"; }, 1500);
+        } catch (error) {
+            // যদি ফেচ কাজ না করে তবে ব্রাউজারে ওপেন হবে
+            window.open(url, '_blank');
+            document.getElementById("loadingBox").style.display = "none";
+        }
     }
 </script>
 </body>
