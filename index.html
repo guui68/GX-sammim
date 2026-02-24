@@ -3,122 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XG Sammim - Pro TikTok Downloader</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>XG Sammim - Multi-Server Downloader</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #00f2fe;
             --accent: #00ffa3;
-            --bg-dark: #12161f; 
-            --card-bg: #1c222d;
+            --bg: #0b0f17;
+            --card: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
         }
 
         body {
             margin: 0; padding: 20px;
             font-family: 'Outfit', sans-serif;
-            background-color: var(--bg-dark);
-            color: white; display: flex; flex-direction: column; 
-            align-items: center; justify-content: center; min-height: 100vh;
+            background-color: var(--bg);
+            background-image: radial-gradient(circle at 50% -20%, rgba(0, 242, 254, 0.15), transparent 50%);
+            color: white; display: flex; align-items: center; justify-content: center; min-height: 100vh;
         }
 
         .container {
             width: 100%; max-width: 380px;
-            background: var(--card-bg);
-            padding: 25px; border-radius: 28px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-            border: 1px solid rgba(255,255,255,0.08);
+            background: var(--card);
+            backdrop-filter: blur(25px);
+            padding: 30px 20px; border-radius: 30px;
+            border: 1px solid var(--border);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
             text-align: center;
         }
 
-        h1 { font-size: 24px; font-weight: 800; margin-bottom: 25px; 
-             background: linear-gradient(135deg, #fff, var(--primary));
+        h1 { font-size: 26px; font-weight: 800; margin-bottom: 25px; 
+             background: linear-gradient(to right, #fff, var(--primary));
              -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        .input-wrapper {
-            position: relative; background: #fff;
-            border-radius: 12px; display: flex; align-items: center;
-            padding: 4px 8px; margin-bottom: 12px;
+        .input-group {
+            background: #fff; border-radius: 15px; display: flex; 
+            align-items: center; padding: 5px 10px; margin-bottom: 12px;
         }
 
         input {
-            flex: 1; border: none; padding: 10px;
-            font-size: 14px; outline: none; color: #111;
-            background: transparent; font-weight: 600;
+            flex: 1; border: none; background: transparent;
+            padding: 10px; color: #111; font-size: 14px; outline: none; font-weight: 600;
         }
 
         .clear-btn {
-            background: #f0f0f0; color: #999; border: none;
+            background: #eee; color: #666; border: none;
             width: 24px; height: 24px; border-radius: 50%;
-            font-size: 12px; cursor: pointer; display: none;
-            align-items: center; justify-content: center; margin-right: 5px;
+            cursor: pointer; display: none; align-items: center; justify-content: center;
         }
 
         .paste-btn {
             background: #4f46e5; color: white; border: none;
-            padding: 7px 12px; border-radius: 8px;
-            font-weight: 700; cursor: pointer; font-size: 11px;
+            padding: 7px 12px; border-radius: 10px;
+            font-weight: 700; font-size: 11px; cursor: pointer; margin-left: 5px;
         }
 
         .fetch-btn {
-            width: 100%; padding: 12px; 
-            background: linear-gradient(45deg, #00c853, #00ffa3);
-            color: #052e16; border: none; border-radius: 12px;
-            font-weight: 800; font-size: 14px; cursor: pointer;
+            width: 100%; padding: 13px; 
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            color: #000; border: none; border-radius: 15px;
+            font-weight: 800; font-size: 15px; cursor: pointer;
+        }
+
+        #display-url {
+            font-size: 10px; color: var(--primary); opacity: 0.5;
+            word-break: break-all; margin: 0 0 15px; display: none;
+            text-align: left; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 8px;
         }
 
         .progress-box {
-            display: none; margin-top: 15px; text-align: left;
-            background: rgba(0,0,0,0.2); padding: 12px; border-radius: 12px;
+            display: none; margin-top: 20px; text-align: left;
         }
-        .progress-text { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 6px; color: var(--primary); }
-        .p-bar-bg { width: 100%; height: 6px; background: #000; border-radius: 10px; overflow: hidden; }
+        .progress-info { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 6px; color: var(--primary); }
+        .p-bar-bg { width: 100%; height: 6px; background: rgba(0,0,0,0.3); border-radius: 10px; overflow: hidden; }
         .p-bar-fill { width: 0%; height: 100%; background: var(--primary); transition: width 0.3s; }
 
         #result-area { display: none; margin-top: 20px; }
-
         .video-card {
             background: rgba(255,255,255,0.03); padding: 12px;
-            border-radius: 18px; margin-bottom: 12px; text-align: left;
-            border: 1px solid rgba(255,255,255,0.05);
-            display: flex; align-items: center; gap: 12px;
+            border-radius: 20px; border: 1px solid var(--border);
+            display: flex; align-items: center; gap: 12px; margin-bottom: 15px;
         }
-
-        #user-img { width: 45px; height: 45px; border-radius: 50%; border: 1.5px solid var(--primary); }
+        #user-img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--primary); }
+        .user-info { text-align: left; }
         .user-info h4 { margin: 0; font-size: 14px; color: #fff; }
         .user-info p { margin: 2px 0 0; font-size: 10px; opacity: 0.6; }
 
         .dl-group { display: flex; flex-direction: column; gap: 8px; }
-        
         .dl-btn {
-            padding: 10px; border: none; border-radius: 10px;
+            padding: 11px; border: none; border-radius: 12px;
             font-weight: 700; font-size: 13px; cursor: pointer;
             color: white; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-        
-        .btn-1 { background: #2563eb; } 
-        .btn-2 { background: #7c3aed; } 
-        .btn-3 { background: #0891b2; } 
+        .btn-s1 { background: #2563eb; } /* Server 1 (HD) */
+        .btn-s2 { background: #7c3aed; } /* Server 2 (Alternative) */
         .btn-audio { background: #f43f5e; }
 
-        .footer { margin-top: 30px; font-size: 11px; opacity: 0.4; }
+        .footer { margin-top: 30px; font-size: 11px; opacity: 0.3; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div id="input-section">
-        <h1>TikTok Downloader</h1>
-        <div class="input-wrapper">
-            <input type="text" id="urlInput" placeholder="লিঙ্কটি এখানে দিন..." oninput="toggleClearBtn()">
+        <h1>TikTok Pro</h1>
+        <div class="input-group">
+            <input type="text" id="urlInput" placeholder="লিঙ্কটি এখানে দিন..." oninput="toggleX()">
             <button class="clear-btn" id="clearBtn" onclick="resetAll()">✕</button>
             <button class="paste-btn" onclick="pasteUrl()">Paste</button>
         </div>
         <button class="fetch-btn" id="fetchBtn" onclick="handleFetch()">🚀 ডাউনলোড লিঙ্ক খুঁজুন</button>
     </div>
-    
-    <div id="main-progress" class="progress-box">
-        <div class="progress-text">
-            <span id="statusText">ভিডিওর তথ্য খোঁজা হচ্ছে...</span>
+
+    <div class="progress-box" id="main-progress">
+        <div id="display-url"></div>
+        <div class="progress-info">
+            <span id="statusText">প্রসেসিং...</span>
             <span id="pPercent">0%</span>
         </div>
         <div class="p-bar-bg"><div class="p-bar-fill" id="pBar"></div></div>
@@ -132,140 +132,136 @@
                 <p id="video-title"></p>
             </div>
         </div>
-        <div id="download-options" class="dl-group"></div>
+        <div class="dl-group" id="dl-buttons"></div>
     </div>
 
     <div class="footer">
         Created by <b>GX Sammim</b><br><br>
-        <a href="https://t.me/sammim14" target="_blank">Telegram</a> • <a href="https://www.facebook.com/share/1SD3SzGTyj/" target="_blank">Facebook</a>
+        <a href="https://t.me/sammim14" target="_blank">Telegram</a> • <a href="https://fb.com/share/1SD3SzGTyj/" target="_blank">Facebook</a>
     </div>
 </div>
 
 <script>
-    function toggleClearBtn() {
-        const input = document.getElementById("urlInput");
-        document.getElementById("clearBtn").style.display = input.value.length > 0 ? "flex" : "none";
+    let currentUrl = "";
+
+    function toggleX() {
+        document.getElementById("clearBtn").style.display = document.getElementById("urlInput").value.length > 0 ? "flex" : "none";
     }
 
-    // ক্লোজ বাটনে চাপ দিলে সব রিসেট হবে
     function resetAll() {
         document.getElementById("urlInput").value = "";
+        document.getElementById("input-section").style.display = "block";
         document.getElementById("result-area").style.display = "none";
         document.getElementById("main-progress").style.display = "none";
-        document.getElementById("input-section").style.display = "block";
-        document.getElementById("pBar").style.width = "0%";
-        toggleClearBtn();
+        toggleX();
     }
 
     async function pasteUrl() {
         try {
             const text = await navigator.clipboard.readText();
             document.getElementById("urlInput").value = text;
-            toggleClearBtn();
+            toggleX();
         } catch (e) {}
     }
 
+    function updateBar(txt, val) {
+        document.getElementById("statusText").innerText = txt;
+        document.getElementById("pPercent").innerText = val + "%";
+        document.getElementById("pBar").style.width = val + "%";
+    }
+
     async function handleFetch() {
-        const url = document.getElementById("urlInput").value.trim();
-        if (!url.includes("tiktok.com")) return alert("সঠিক লিঙ্ক দিন!");
+        currentUrl = document.getElementById("urlInput").value.trim();
+        if (!currentUrl.includes("tiktok.com")) return alert("সঠিক লিঙ্ক দিন!");
 
-        const inputSection = document.getElementById("input-section");
-        const progressBox = document.getElementById("main-progress");
-        const bar = document.getElementById("pBar");
-        const per = document.getElementById("pPercent");
-        const statusText = document.getElementById("statusText");
-
-        statusText.innerText = "ভিডিওর তথ্য খোঁজা হচ্ছে...";
-        progressBox.style.display = "block";
+        document.getElementById("input-section").style.display = "none";
+        document.getElementById("main-progress").style.display = "block";
+        document.getElementById("display-url").innerText = currentUrl;
+        document.getElementById("display-url").style.display = "block";
         
-        let p = 0;
-        let interval = setInterval(() => { if (p < 90) { p += 10; bar.style.width = p + "%"; per.innerText = p + "%"; } }, 150);
+        updateBar("সার্ভার ১ থেকে তথ্য আসছে...", 50);
 
         try {
-            // আপনার চাহিদা মতো দুটি এপিআই রাখা হয়েছে
-            const [res1, res2] = await Promise.all([
-                fetch(`https://tikwm.com/api/?url=${encodeURIComponent(url)}`),
-                fetch(`https://tikwm.com/api/?url=${encodeURIComponent(url)}&hd=1`)
-            ]);
-            
-            const data1 = await res1.json();
-            const data2 = await res2.json();
-            
-            clearInterval(interval);
-            bar.style.width = "100%"; per.innerText = "100%";
+            // সার্ভার ১ কল
+            const res = await fetch(`https://tikwm.com/api/?url=${encodeURIComponent(currentUrl)}&hd=1`);
+            const json = await res.json();
 
-            if (data1.data) {
+            if (json.data) {
+                updateBar("সম্পন্ন!", 100);
                 setTimeout(() => {
-                    inputSection.style.display = "none"; // তথ্য আসার পর ইনপুট সেকশন হাইড
-                    progressBox.style.display = "none";
-                    renderResult(data1.data, data2.data);
+                    document.getElementById("main-progress").style.display = "none";
+                    renderResult(json.data);
                 }, 400);
             } else {
-                alert("ভিডিও পাওয়া যায়নি!");
-                progressBox.style.display = "none";
+                alert("সার্ভার ১ ব্যস্ত! অন্য সোর্স চেষ্টা করুন।");
+                resetAll();
             }
-        } catch (err) {
-            alert("কানেকশন এরর!");
-            progressBox.style.display = "none";
+        } catch (e) {
+            alert("কানেকশন এরর!"); resetAll();
         }
     }
 
-    function renderResult(standard, hd) {
-        document.getElementById("user-img").src = standard.author.avatar;
-        document.getElementById("user-name").innerText = "@" + standard.author.nickname;
-        document.getElementById("video-title").innerText = standard.title || "TikTok Video";
+    function renderResult(data) {
+        document.getElementById("user-img").src = data.author.avatar;
+        document.getElementById("user-name").innerText = "@" + data.author.nickname;
+        document.getElementById("video-title").innerText = data.title || "TikTok Video";
         
-        const group = document.getElementById("download-options");
+        const group = document.getElementById("dl-buttons");
         group.innerHTML = ""; 
 
-        if (standard.play) {
-            addBtn(group, "📥 ডাউনলোড ১ (Server 1)", "btn-1", () => startDownload(standard.play, "Video_S1.mp4"));
-            const hdUrl = (hd && hd.data && hd.data.hdplay) ? hd.data.hdplay : (standard.hdplay || standard.play);
-            addBtn(group, "🚀 ডাউনলোড ২ (HD Server)", "btn-2", () => startDownload(hdUrl, "Video_HD.mp4"));
-            addBtn(group, "🌐 ব্রাউজার ডাউনলোড", "btn-3", () => window.open(standard.play, '_blank'));
-        }
-        addBtn(group, "🎵 অডিও (MP3)", "btn-audio", () => startDownload(standard.music, "Audio.mp3"));
+        // বাটন ১ (Server 1 - TikWM HD)
+        const s1_link = data.hdplay || data.play;
+        addBtn(group, "🚀 ডাউনলোড ১ (Server 1 - HD)", "btn-s1", () => downloadFile(s1_link, "GX_Server1_HD.mp4"));
+
+        // বাটন ২ (Server 2 - Alternative API)
+        // এটি সম্পূর্ণ আলাদা একটি এপিআই সোর্স ব্যবহার করবে
+        addBtn(group, "📥 ডাউনলোড ২ (Server 2 - Multi)", "btn-s2", () => downloadAlternative(currentUrl));
+
+        addBtn(group, "🎵 অডিও ডাউনলোড (MP3)", "btn-audio", () => downloadFile(data.music, "Audio.mp3"));
 
         document.getElementById("result-area").style.display = "block";
-        // রেজাল্ট আসার পর ইনপুট সেকশন হাইড থাকলেও ক্লোজ বাটনটি কাজ করবে
-        document.getElementById("input-section").style.display = "none";
     }
 
-    function addBtn(parent, text, className, clickFunc) {
-        const btn = document.createElement("button");
-        btn.className = "dl-btn " + className;
-        btn.innerText = text;
-        btn.onclick = clickFunc;
-        parent.appendChild(btn);
+    function addBtn(p, t, c, f) {
+        const b = document.createElement("button");
+        b.className = "dl-btn " + c; b.innerText = t; b.onclick = f;
+        p.appendChild(b);
     }
 
-    async function startDownload(url, name) {
-        const progressBox = document.getElementById("main-progress");
-        const statusText = document.getElementById("statusText");
-        const bar = document.getElementById("pBar");
-        const per = document.getElementById("pPercent");
-
-        progressBox.style.display = "block";
-        statusText.innerText = "ডাউনলোড হচ্ছে...";
-        bar.style.width = "0%";
-        
-        let p = 0;
-        let timer = setInterval(() => { if (p < 95) { p += 5; bar.style.width = p + "%"; per.innerText = p + "%"; } }, 200);
-
+    async function downloadFile(url, name) {
+        document.getElementById("main-progress").style.display = "block";
+        updateBar("ডাউনলোড শুরু হচ্ছে...", 40);
         try {
             const res = await fetch(url);
             const blob = await res.blob();
-            clearInterval(timer);
-            bar.style.width = "100%"; per.innerText = "100%";
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = name; a.click();
+            updateBar("সফল!", 100);
+            setTimeout(() => { document.getElementById("main-progress").style.display = "none"; }, 1500);
+        } catch (e) { window.open(url, '_blank'); }
+    }
 
-            const link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.download = name;
-            link.click();
-            setTimeout(() => { progressBox.style.display = "none"; }, 1500);
+    // আলাদা কোম্পানি/সার্ভার থেকে ডাউনলোড করার ফাংশন
+    async function downloadAlternative(url) {
+        document.getElementById("main-progress").style.display = "block";
+        updateBar("সার্ভার ২ থেকে লিঙ্ক খুঁজছি...", 50);
+        
+        try {
+            // এখানে আপনি চাইলে 'https://www.tiktok-no-watermark.com/api' বা অন্য সোর্স বসাতে পারেন
+            // আপাতত আমি একটি শক্তিশালী বিকল্প লিঙ্ক জেনারেটর দেখাচ্ছি
+            const res = await fetch(`https://api.tiklydown.eu.org/api/download?url=${encodeURIComponent(url)}`);
+            const json = await res.json();
+            
+            if(json.result && json.result.video) {
+                downloadFile(json.result.video.noWatermark || json.result.video.watermark, "GX_Server2.mp4");
+            } else {
+                // যদি ২য় কোম্পানি ফেইল করে, তবে ব্রাউজার ওপেন হবে
+                window.open(url, '_blank');
+            }
         } catch (e) {
-            window.open(url, '_blank');
-            progressBox.style.display = "none";
+            alert("সার্ভার ২ ব্যস্ত! সার্ভার ১ ব্যবহার করুন।");
+            document.getElementById("main-progress").style.display = "none";
         }
     }
 </script>
