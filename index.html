@@ -3,61 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XG Sammim TikTok Downloader</title>
+    <title>XG Sammim TikTok Downloader Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #00f2fe;
+            --secondary: #4facfe;
             --accent: #00ffa3;
-            --glass: rgba(255, 255, 255, 0.05);
+            --text: #ffffff;
         }
+
+        * { box-sizing: border-box; }
 
         body {
             margin: 0; padding: 20px;
             font-family: 'Outfit', sans-serif;
-            /* প্রিমিয়াম ব্ল্যাক ব্যাকগ্রাউন্ড উইথ গ্রেডিয়েন্ট */
-            background: radial-gradient(circle at top right, #1a1c2c, #0b0e14 60%);
-            color: white; display: flex; flex-direction: column; 
-            align-items: center; justify-content: center; min-height: 100vh;
-            overflow-x: hidden;
+            /* নতুন প্রিমিয়াম ব্যাকগ্রাউন্ড ডিজাইন */
+            background: #0b0e14;
+            background: linear-gradient(135deg, #0f172a 0%, #020617 100%);
+            color: var(--text);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            min-height: 100vh; overflow-x: hidden;
+            position: relative;
         }
 
-        /* ব্যাকগ্রাউন্ডে হালকা গ্লোয়িং ইফেক্ট */
-        body::before {
-            content: ""; position: absolute; width: 300px; height: 300px;
-            background: var(--primary); filter: blur(150px);
-            opacity: 0.1; top: 10%; left: 10%; z-index: -1;
+        /* ব্যাকগ্রাউন্ডে এনিমেটেড গ্লো */
+        body::before, body::after {
+            content: ""; position: absolute; width: 400px; height: 400px;
+            border-radius: 50%; background: radial-gradient(circle, rgba(0, 242, 254, 0.15), transparent 70%);
+            z-index: -1; animation: float 15s infinite alternate;
+        }
+        body::before { top: -100px; left: -100px; }
+        body::after { bottom: -100px; right: -100px; animation-delay: -5s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(50px, 100px) scale(1.2); }
         }
 
         .container {
             width: 100%; max-width: 420px;
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            padding: 30px; border-radius: 32px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
-            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            padding: 30px; border-radius: 35px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.7);
+            border: 1px solid rgba(255,255,255,0.1);
             text-align: center;
         }
 
         h1 { font-size: 26px; font-weight: 800; margin-bottom: 25px; 
-             letter-spacing: -0.5px;
-             background: linear-gradient(to right, #fff, var(--primary));
+             background: linear-gradient(to right, #ffffff, var(--primary));
              -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
+        /* ইনপুট গ্রুপ */
         .input-wrapper {
-            display: flex; background: white;
-            border-radius: 18px; padding: 6px; margin-bottom: 15px;
-            align-items: center;
+            display: flex; background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px; padding: 6px; margin-bottom: 15px;
+            align-items: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
 
         input {
-            flex: 1; border: none; padding: 12px;
+            flex: 1; border: none; padding: 12px 15px;
             font-size: 15px; outline: none; color: #111;
             background: transparent; font-weight: 600;
         }
 
         .clear-btn {
-            background: #f1f5f9; border: none; color: #64748b;
+            background: #e5e7eb; border: none; color: #374151;
             width: 26px; height: 26px; border-radius: 50%;
             cursor: pointer; display: none; margin-right: 8px;
             font-size: 10px; font-weight: bold;
@@ -65,57 +78,58 @@
 
         .paste-btn {
             background: #4f46e5; color: white; border: none;
-            padding: 10px 18px; border-radius: 14px;
+            padding: 10px 18px; border-radius: 15px;
             font-weight: 700; cursor: pointer; font-size: 13px;
         }
 
         .fetch-btn {
             width: 100%; padding: 16px; 
             background: linear-gradient(45deg, #00c853, #00ffa3);
-            color: #052e16; border: none; border-radius: 18px;
+            color: #052e16; border: none; border-radius: 20px;
             font-weight: 800; font-size: 16px; cursor: pointer;
             transition: 0.3s;
         }
-        .fetch-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,255,163,0.2); }
+        .fetch-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(0,255,163,0.3); }
 
-        #result-area { display: none; margin-top: 25px; animation: fadeInUp 0.5s ease; }
+        /* রেজাল্ট কার্ড */
+        #result-area { display: none; margin-top: 25px; animation: fadeInUp 0.5s ease-out; }
         
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         .video-card {
-            background: rgba(255,255,255,0.04); padding: 15px;
-            border-radius: 22px; margin-bottom: 15px; text-align: left;
-            border: 1px solid rgba(255,255,255,0.05);
+            background: rgba(255,255,255,0.05); padding: 15px;
+            border-radius: 25px; margin-bottom: 15px; text-align: left;
+            border: 1px solid rgba(255,255,255,0.08);
             display: flex; align-items: center; gap: 15px;
         }
 
-        #user-img { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--primary); }
+        #user-img { width: 55px; height: 55px; border-radius: 50%; border: 2px solid var(--primary); padding: 2px; }
         .user-info h4 { margin: 0; font-size: 15px; color: var(--primary); }
-        .user-info p { margin: 3px 0 0; font-size: 12px; opacity: 0.7; }
+        .user-info p { margin: 4px 0 0; font-size: 12px; opacity: 0.7; }
 
         .dl-group { display: flex; flex-direction: column; gap: 12px; }
         .dl-btn {
-            padding: 16px; border: none; border-radius: 16px;
-            font-weight: 700; font-size: 14px; cursor: pointer;
+            padding: 16px; border: none; border-radius: 18px;
+            font-weight: 700; font-size: 15px; cursor: pointer;
             color: white; display: flex; align-items: center; justify-content: center; gap: 10px;
             transition: 0.2s;
         }
-        .v-btn { background: #3b82f6; }
-        .a-btn { background: #f43f5e; }
+        .v-btn { background: #3b82f6; box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3); }
+        .a-btn { background: #f43f5e; box-shadow: 0 8px 20px rgba(244, 63, 94, 0.3); }
 
-        /* প্রিমিয়াম লোডিং বক্স (বাটনের নিচে) */
+        /* প্রিমিয়াম প্রসেসিং বক্স (বাটনের নিচে) */
         #loading-container {
-            display: none; margin-top: 20px; background: rgba(0,0,0,0.4);
-            padding: 20px; border-radius: 20px; border: 1px solid rgba(0,242,254,0.2);
-            animation: fadeIn 0.3s ease;
+            display: none; margin-top: 20px; background: rgba(0,0,0,0.5);
+            padding: 20px; border-radius: 24px; border: 1px solid rgba(0,242,254,0.3);
         }
 
-        .loader-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13px; font-weight: 600; }
+        .loader-header { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; font-weight: 700; color: var(--primary); }
         .p-bar-bg { width: 100%; height: 8px; background: #0f172a; border-radius: 10px; overflow: hidden; }
-        .p-bar-fill { width: 0%; height: 100%; background: var(--primary); box-shadow: 0 0 10px var(--primary); transition: width 0.3s; }
+        .p-bar-fill { width: 0%; height: 100%; background: linear-gradient(to right, var(--primary), var(--accent)); box-shadow: 0 0 15px var(--primary); transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 
-        .footer { margin-top: 30px; font-size: 13px; opacity: 0.6; }
-        .footer a { color: var(--primary); text-decoration: none; font-weight: 700; }
+        .footer { margin-top: 35px; font-size: 13px; opacity: 0.6; }
+        .footer a { color: var(--primary); text-decoration: none; font-weight: 700; border-bottom: 1px solid transparent; transition: 0.3s; }
+        .footer a:hover { border-bottom: 1px solid var(--primary); }
     </style>
 </head>
 <body>
@@ -133,12 +147,13 @@
 
     <div id="result-area">
         <div class="video-card">
-            <img id="user-img" src="" alt="">
+            <img id="user-img" src="" alt="User">
             <div class="user-info">
                 <h4 id="user-name"></h4>
                 <p id="video-title"></p>
             </div>
         </div>
+        
         <div class="dl-group">
             <button class="dl-btn v-btn" id="dlVid">📥 Download Video (No WM)</button>
             <button class="dl-btn a-btn" id="dlAud">🎵 Download Audio (MP3)</button>
@@ -146,7 +161,7 @@
 
         <div id="loading-container">
             <div class="loader-header">
-                <span id="loaderStatus">Processing...</span>
+                <span id="loaderStatus">Processing File...</span>
                 <span id="pPercent">0%</span>
             </div>
             <div class="p-bar-bg"><div class="p-bar-fill" id="pBar"></div></div>
@@ -171,6 +186,7 @@
         document.getElementById("urlInput").value = "";
         checkInput();
         document.getElementById("result-area").style.display = "none";
+        document.getElementById("loading-container").style.display = "none";
     }
 
     async function pasteUrl() {
@@ -183,7 +199,7 @@
 
     async function handleFetch() {
         const url = document.getElementById("urlInput").value.trim();
-        if (!url.includes("tiktok.com")) return alert("Please paste a valid TikTok link!");
+        if (!url || !url.includes("tiktok.com")) return alert("Please paste a valid TikTok link!");
 
         document.getElementById("result-area").style.display = "none";
         document.getElementById("loading-container").style.display = "none";
@@ -211,15 +227,16 @@
     function showResult(data) {
         document.getElementById("user-img").src = data.author.avatar;
         document.getElementById("user-name").innerText = "@" + data.author.nickname;
-        document.getElementById("video-title").innerText = data.title || "TikTok Video";
+        document.getElementById("video-title").innerText = data.title || "TikTok Video Content";
         
-        // বাটন ফাংশন সেট করা
-        setupDownload(document.getElementById("dlVid"), data.play, "GX_Video.mp4");
-        setupDownload(document.getElementById("dlAud"), data.music, "GX_Audio.mp3");
+        // বাটন ফাংশন সেট করা (বারবার ডাউনলোডের জন্য নতুন লজিক)
+        setupDownload(document.getElementById("dlVid"), data.play, "GX_TikTok_Video_" + Date.now() + ".mp4");
+        setupDownload(document.getElementById("dlAud"), data.music, "GX_TikTok_Audio_" + Date.now() + ".mp3");
 
         document.getElementById("result-area").style.display = "block";
     }
 
+    // ডাউনলোড ফিক্স লজিক (একই ফাইল বারবার ডাউনলোডের জন্য)
     function setupDownload(btn, fileUrl, fileName) {
         btn.onclick = async function() {
             const container = document.getElementById("loading-container");
@@ -227,46 +244,54 @@
             const statusText = document.getElementById("loaderStatus");
             const pPercent = document.getElementById("pPercent");
 
-            // UI রিসেট (যাতে একই ভিডিও বারবার ডাউনলোড করা যায়)
+            // UI ও বাটন রিসেট
             container.style.display = "block";
             fill.style.width = "0%";
             pPercent.innerText = "0%";
             statusText.innerText = "Downloading...";
+            btn.disabled = true; // প্রসেসিং এর সময় বাটন অফ
             
             let progress = 0;
             let timer = setInterval(() => {
-                if (progress < 90) {
-                    progress += 3;
+                if (progress < 95) {
+                    progress += Math.floor(Math.random() * 5) + 2;
+                    if(progress > 95) progress = 95;
                     fill.style.width = progress + "%";
                     pPercent.innerText = progress + "%";
                 }
-            }, 100);
+            }, 150);
 
             try {
-                const response = await fetch(fileUrl);
+                // ক্যাশ এড়ানোর জন্য নতুন রিকোয়েস্ট লজিক
+                const response = await fetch(fileUrl, { cache: 'no-store' });
                 const blob = await response.blob();
                 
                 clearInterval(timer);
                 fill.style.width = "100%";
                 pPercent.innerText = "100%";
-                statusText.innerText = "Saving to device...";
+                statusText.innerText = "✅ Saved to Gallery!";
 
-                const url = window.URL.createObjectURL(blob);
+                const downloadUrl = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
-                a.href = url; a.download = fileName;
+                a.style.display = 'none';
+                a.href = downloadUrl;
+                a.download = fileName;
                 document.body.appendChild(a);
                 a.click();
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(url);
                 
+                // মেমোরি ক্লিয়ারেন্স (যাতে আবার ডাউনলোড করা যায়)
                 setTimeout(() => {
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(downloadUrl);
                     container.style.display = "none";
-                    // বাটনকে আবার সক্রিয় রাখা হয়েছে যাতে রিফ্রেশ ছাড়া ডাউনলোড করা যায়
-                }, 2000);
+                    btn.disabled = false; // বাটন আবার অন করা হলো
+                }, 2500);
 
             } catch (e) {
+                console.error(e);
                 window.open(fileUrl, '_blank');
                 container.style.display = "none";
+                btn.disabled = false;
             }
         };
     }
