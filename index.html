@@ -92,24 +92,15 @@
         .user-info p { margin: 3px 0 0; font-size: 12px; opacity: 0.7; }
 
         .dl-group { display: flex; flex-direction: column; gap: 12px; }
-        .dl-btn {
-            padding: 16px; border: none; border-radius: 16px;
-            font-weight: 700; font-size: 14px; cursor: pointer;
+        .dl-link {
+            text-decoration: none;
+            padding: 16px; border-radius: 16px;
+            font-weight: 700; font-size: 14px; 
             color: white; display: flex; align-items: center; justify-content: center; gap: 10px;
             transition: 0.2s;
         }
         .v-btn { background: #3b82f6; }
         .a-btn { background: #f43f5e; }
-
-        #loading-container {
-            display: none; margin-top: 20px; background: rgba(0,0,0,0.4);
-            padding: 20px; border-radius: 20px; border: 1px solid rgba(0,242,254,0.2);
-            animation: fadeIn 0.3s ease;
-        }
-
-        .loader-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13px; font-weight: 600; }
-        .p-bar-bg { width: 100%; height: 8px; background: #0f172a; border-radius: 10px; overflow: hidden; }
-        .p-bar-fill { width: 0%; height: 100%; background: var(--primary); box-shadow: 0 0 10px var(--primary); transition: width 0.3s; }
 
         .footer { margin-top: 30px; font-size: 13px; opacity: 0.6; }
         .footer a { color: var(--primary); text-decoration: none; font-weight: 700; }
@@ -137,16 +128,8 @@
             </div>
         </div>
         <div class="dl-group">
-            <button class="dl-btn v-btn" id="dlVid">📥 Download Video (No WM)</button>
-            <button class="dl-btn a-btn" id="dlAud">🎵 Download Audio (MP3)</button>
-        </div>
-
-        <div id="loading-container">
-            <div class="loader-header">
-                <span id="loaderStatus">Processing...</span>
-                <span id="pPercent">0%</span>
-            </div>
-            <div class="p-bar-bg"><div class="p-bar-fill" id="pBar"></div></div>
+            <a href="#" class="dl-link v-btn" id="dlVid">📥 Download Video (No WM)</a>
+            <a href="#" class="dl-link a-btn" id="dlAud">🎵 Download Audio (MP3)</a>
         </div>
     </div>
 
@@ -182,15 +165,12 @@
         const url = document.getElementById("urlInput").value.trim();
         if (!url.includes("tiktok.com")) return alert("Please paste a valid TikTok link!");
 
-        document.getElementById("result-area").style.display = "none";
-        document.getElementById("loading-container").style.display = "none";
         const fetchBtn = document.getElementById("fetchBtn");
         fetchBtn.disabled = true;
         fetchBtn.innerText = "Searching...";
 
         try {
-            // API রিকোয়েস্টেও ক্যাশ ক্লিনিং যোগ করা হয়েছে
-            const res = await fetch(`https://tikwm.com/api/?url=${encodeURIComponent(url)}&t=${Date.now()}`);
+            const res = await fetch(`https://tikwm.com/api/?url=${encodeURIComponent(url)}`);
             const json = await res.json();
             
             if (json.data) {
@@ -211,79 +191,22 @@
         document.getElementById("user-name").innerText = "@" + data.author.nickname;
         document.getElementById("video-title").innerText = data.title || "TikTok Video";
         
-        // বাটনগুলোকে একদম ফ্রেশ করে তৈরি করা
-        const vidBtn = document.getElementById("dlVid");
-        const audBtn = document.getElementById("dlAud");
-
-        // পুরনো ফাংশন থাকলে তা রিমুভ করার জন্য ক্লোনিং করা হয়েছে
-        const newVidBtn = vidBtn.cloneNode(true);
-        const newAudBtn = audBtn.cloneNode(true);
-        vidBtn.parentNode.replaceChild(newVidBtn, vidBtn);
-        audBtn.parentNode.replaceChild(newAudBtn, audBtn);
-
-        setupDownload(newVidBtn, data.play, "video");
-        setupDownload(newAudBtn, data.music, "audio");
+        // ডাউনলোড লিংক সেটআপ (সরাসরি ব্রাউজার ইঞ্জিনের মাধ্যমে)
+        const vidLink = document.getElementById("dlVid");
+        const audLink = document.getElementById("dlAud");
+        
+        // ইউনিক নাম সেট করা হয়েছে যাতে বারবার ডাউনলোডে বাধা না দেয়
+        const ts = Date.now();
+        
+        // ভিডিও লিংক
+        vidLink.href = data.play;
+        vidLink.setAttribute('download', `GX_Video_${ts}.mp4`);
+        
+        // অডিও লিংক
+        audLink.href = data.music;
+        audLink.setAttribute('download', `GX_Audio_${ts}.mp3`);
 
         document.getElementById("result-area").style.display = "block";
-    }
-
-    function setupDownload(btn, fileUrl, type) {
-        btn.onclick = async function() {
-            const container = document.getElementById("loading-container");
-            const fill = document.getElementById("pBar");
-            const statusText = document.getElementById("loaderStatus");
-            const pPercent = document.getElementById("pPercent");
-
-            container.style.display = "block";
-            fill.style.width = "0%";
-            pPercent.innerText = "0%";
-            statusText.innerText = "Downloading...";
-
-            const ts = Date.now();
-            const fileName = type === "video" ? `GX_Video_${ts}.mp4` : `GX_Audio_${ts}.mp3`;
-            
-            // চূড়ান্ত সমাধান: URL-এর সাথে ইউনিক প্যারামিটার যোগ করা যাতে ক্যাশ না ধরে
-            const freshUrl = fileUrl + (fileUrl.includes('?') ? '&' : '?') + 'nocache=' + ts;
-
-            let progress = 0;
-            let timer = setInterval(() => {
-                if (progress < 90) {
-                    progress += 5;
-                    fill.style.width = progress + "%";
-                    pPercent.innerText = progress + "%";
-                }
-            }, 100);
-
-            try {
-                // cache: 'no-store' ব্যবহার করে ব্রাউজার ক্যাশ বাইপাস করা
-                const response = await fetch(freshUrl, { cache: 'no-store' });
-                const blob = await response.blob();
-                
-                clearInterval(timer);
-                fill.style.width = "100%";
-                pPercent.innerText = "100%";
-                statusText.innerText = "Success! Saving...";
-
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = fileName;
-                document.body.appendChild(a);
-                a.click();
-                
-                // ক্লিনআপ: ২ সেকেন্ড পর সব পরিষ্কার করে বাটনকে আবার প্রস্তুত করবে
-                setTimeout(() => {
-                    document.body.removeChild(a);
-                    window.URL.revokeObjectURL(url);
-                    container.style.display = "none";
-                }, 2000);
-
-            } catch (e) {
-                clearInterval(timer);
-                window.open(freshUrl, '_blank');
-                container.style.display = "none";
-            }
-        };
     }
 </script>
 </body>
