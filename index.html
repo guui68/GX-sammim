@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XG Sammim | TikTok Downloader</title>
+    <title>XG Sammim | Pro TikTok Downloader</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #6366f1;
             --secondary: #a855f7;
-            --accent: #22c55e;
             --bg-dark: #0f172a;
-            --glass: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass: rgba(255, 255, 255, 0.07);
+            --glass-border: rgba(255, 255, 255, 0.12);
         }
 
         body {
@@ -25,131 +24,99 @@
             overflow-x: hidden;
         }
 
-        .blob {
-            position: absolute; width: 300px; height: 300px;
-            background: var(--primary); filter: blur(80px);
-            z-index: -1; border-radius: 50%; opacity: 0.2;
-        }
-
         .container {
             background: var(--glass);
-            backdrop-filter: blur(20px);
+            backdrop-filter: blur(25px);
             border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 40px 30px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            width: 90%; max-width: 480px;
+            border-radius: 28px;
+            padding: 40px 25px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+            width: 90%; max-width: 450px;
             text-align: center;
             animation: fadeIn 0.8s ease-out;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        h1 {
-            font-weight: 800; font-size: 2rem; margin-bottom: 30px;
-            background: linear-gradient(to right, #fff, #94a3b8);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
+        h1 { font-weight: 800; font-size: 1.8rem; margin-bottom: 25px; color: #fff; text-shadow: 0 4px 10px rgba(0,0,0,0.3); }
 
         .input-group {
-            position: relative; background: rgba(0, 0, 0, 0.2);
-            border-radius: 16px; padding: 5px; display: flex;
-            border: 1px solid var(--glass-border); transition: 0.3s;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 18px; padding: 6px; display: flex;
+            border: 1px solid var(--glass-border); margin-bottom: 20px;
         }
 
         input {
             background: transparent; border: none; color: white;
-            padding: 15px; width: 100%; outline: none; font-size: 0.95rem;
+            padding: 12px 15px; width: 100%; outline: none; font-size: 0.9rem;
         }
 
         .paste-btn {
             background: var(--primary); color: white; border: none;
-            padding: 0 20px; border-radius: 12px; cursor: pointer;
-            font-weight: 600; transition: 0.3s;
+            padding: 0 18px; border-radius: 14px; cursor: pointer; font-weight: 600;
         }
 
         .fetch-btn {
-            width: 100%; margin-top: 20px; padding: 16px;
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            border: none; border-radius: 16px; color: white;
+            width: 100%; padding: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none; border-radius: 18px; color: white;
             font-weight: 700; font-size: 1rem; cursor: pointer;
-            transition: 0.4s; box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.4);
+            transition: 0.3s; box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
         }
 
         #video-info {
-            margin-top: 25px; background: rgba(255,255,255,0.03);
-            border-radius: 18px; padding: 20px; display: none;
-            text-align: left; border: 1px solid var(--glass-border);
+            margin-top: 25px; background: rgba(0,0,0,0.2);
+            border-radius: 20px; padding: 15px; display: none; text-align: left;
         }
 
         .profile-section { display: flex; align-items: center; gap: 15px; }
-        #user-logo { width: 55px; height: 55px; border-radius: 50%; border: 2px solid var(--primary); }
-        .user-details p { margin: 5px 0 0; font-size: 0.85rem; color: #94a3b8; }
+        #user-logo { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--primary); }
 
-        .dl-container { margin-top: 20px; display: none; flex-direction: column; gap: 10px; }
+        .dl-container { margin-top: 20px; display: none; flex-direction: column; gap: 12px; }
         .q-btn {
-            width: 100%; padding: 14px; border-radius: 12px; border: none;
-            font-weight: 600; cursor: pointer; transition: 0.2s; color: white;
+            width: 100%; padding: 15px; border-radius: 14px; border: none;
+            font-weight: 700; cursor: pointer; color: white;
             display: flex; align-items: center; justify-content: center; gap: 10px;
         }
 
-        .hd-btn { background: #0ea5e9; }
-        .sd-btn { background: #64748b; }
-        .mp3-btn { background: #f43f5e; }
+        .hd-btn { background: #3b82f6; }
+        .sd-btn { background: #6366f1; }
+        .mp3-btn { background: #ef4444; }
 
-        .loader-dots { display: none; margin: 20px auto; }
-        .loader-dots div { width: 8px; height: 8px; background: var(--primary); border-radius: 50%; display: inline-block; animation: bounce 0.6s infinite alternate; }
-        .loader-dots div:nth-child(2) { animation-delay: 0.2s; }
-        .loader-dots div:nth-child(3) { animation-delay: 0.4s; }
-
-        @keyframes bounce { to { transform: translateY(-10px); opacity: 0.5; } }
-
-        #status-msg { margin-top: 15px; font-size: 0.9rem; font-weight: 500; min-height: 20px; }
-        .footer { margin-top: 30px; font-size: 0.85rem; color: #64748b; }
+        #status-msg { margin-top: 15px; font-size: 0.85rem; color: #cbd5e1; min-height: 20px; line-height: 1.4; }
+        .footer { margin-top: 30px; font-size: 0.8rem; color: #64748b; }
     </style>
 </head>
 <body>
 
-<div class="blob" style="top: 10%; left: 10%;"></div>
-<div class="blob" style="bottom: 10%; right: 10%; background: var(--secondary);"></div>
-
 <div class="container">
-    <h1>TikTok Save</h1>
+    <h1>TikTok Downloader</h1>
 
     <div class="input-group">
         <input type="text" id="videoUrl" placeholder="Paste link here..." autocomplete="off">
         <button class="paste-btn" onclick="pasteText()">Paste</button>
     </div>
 
-    <button class="fetch-btn" id="mainBtn" onclick="startProcess()">Get Video</button>
-
-    <div class="loader-dots" id="loader">
-        <div></div><div></div><div></div>
-    </div>
+    <button class="fetch-btn" id="mainBtn" onclick="startProcess()">Get Video Info</button>
+    
     <div id="status-msg"></div>
 
     <div id="video-info">
         <div class="profile-section">
-            <img id="user-logo" src="" alt="User">
+            <img id="user-logo" src="" alt="">
             <div class="user-details">
-                <h4 id="user-name" style="margin:0"></h4>
-                <p id="video-desc"></p>
+                <h4 id="user-name" style="margin:0; font-size: 0.95rem;"></h4>
+                <p id="video-desc" style="margin:4px 0 0; font-size: 0.8rem; color: #94a3b8;"></p>
             </div>
         </div>
     </div>
 
     <div class="dl-container" id="quality-list">
-        <button class="q-btn hd-btn" id="hdBtn">💎 Download High Quality</button>
-        <button class="q-btn sd-btn" id="sdBtn">🎬 Download Normal</button>
-        <button class="q-btn mp3-btn" id="mp3Btn">🎵 Download Audio (MP3)</button>
+        <button class="q-btn hd-btn" id="hdBtn">📥 Download Video (No Watermark)</button>
+        <button class="q-btn mp3-btn" id="mp3Btn">🎵 Download Audio MP3</button>
     </div>
 
-    <div class="footer">
-        Designed by <b>GX Sammim</b>
-    </div>
+    <div class="footer">Created by GX Sammim</div>
 </div>
 
 <script>
@@ -161,78 +128,84 @@
     }
 
     async function startProcess() {
-        const url = document.getElementById("videoUrl").value.trim();
+        const urlInput = document.getElementById("videoUrl").value.trim();
+        const status = document.getElementById("status-msg");
         const mainBtn = document.getElementById("mainBtn");
-        const statusMsg = document.getElementById("status-msg");
-        const loader = document.getElementById("loader");
 
-        if (!url.includes("tiktok.com")) {
-            statusMsg.innerText = "❌ Valid TikTok link দিন";
+        if (!urlInput.includes("tiktok.com")) {
+            status.innerText = "❌ Please paste a valid TikTok link!";
             return;
         }
 
-        loader.style.display = "block";
-        statusMsg.innerText = "ভিডিও খোঁজা হচ্ছে...";
+        status.innerText = "⏳ Finding video from server...";
         mainBtn.disabled = true;
 
         try {
-            const res = await fetch(`https://tikwm.com/api/?url=${encodeURIComponent(url)}`);
+            const res = await fetch(`https://tikwm.com/api/?url=${encodeURIComponent(urlInput)}`);
             const json = await res.json();
-            const data = json.data;
-
-            if (data) {
-                renderUI(data);
+            
+            if (json.data) {
+                showResult(json.data);
+                status.innerText = "✅ Video Found! Click below to download.";
             } else {
-                throw new Error();
+                status.innerText = "❌ Video not found. Try another link.";
             }
         } catch (e) {
-            statusMsg.innerText = "❌ ভিডিও পাওয়া যায়নি। আবার চেষ্টা করুন।";
+            status.innerText = "❌ Server error. Please try again.";
         } finally {
-            loader.style.display = "none";
             mainBtn.disabled = false;
         }
     }
 
-    function renderUI(data) {
+    function showResult(data) {
         document.getElementById("video-info").style.display = "block";
         document.getElementById("quality-list").style.display = "flex";
         document.getElementById("user-logo").src = data.author.avatar;
         document.getElementById("user-name").innerText = "@" + data.author.nickname;
-        document.getElementById("video-desc").innerText = data.title || "TikTok Video";
+        document.getElementById("video-desc").innerText = data.title ? data.title.substring(0, 50) + "..." : "TikTok Content";
 
-        setupDownload(document.getElementById("hdBtn"), data.hdplay || data.play, "TikTok_HD_GX.mp4");
-        setupDownload(document.getElementById("sdBtn"), data.play, "TikTok_Normal_GX.mp4");
-        setupDownload(document.getElementById("mp3Btn"), data.music, "TikTok_Audio_GX.mp3");
+        // Download logic
+        setupDl(document.getElementById("hdBtn"), data.play, "GX_TikTok_Video.mp4");
+        setupDl(document.getElementById("mp3Btn"), data.music, "GX_TikTok_Music.mp3");
     }
 
-    async function setupDownload(btn, fileUrl, fileName) {
+    async function setupDl(btn, fileUrl, fileName) {
         btn.onclick = async function() {
             const status = document.getElementById("status-msg");
-            const originalText = btn.innerHTML;
+            const originalBtnText = btn.innerHTML;
             
             btn.innerHTML = "🌀 Processing...";
             btn.disabled = true;
-            status.innerText = "⏳ ডাউনলোড শুরু করার জন্য ফাইল তৈরি হচ্ছে...";
+            status.innerHTML = "⏳ ডাউনলোড শুরু হচ্ছে... <br><small>(এটি কয়েক সেকেন্ড সময় নিতে পারে)</small>";
 
             try {
+                // ব্রাউজারকে বাধ্য করা হচ্ছে ফাইলটি ডাউনলোড করার জন্য
                 const response = await fetch(fileUrl);
+                if (!response.ok) throw new Error("Fetch failed");
+                
                 const blob = await response.blob();
                 const url = window.URL.createObjectURL(blob);
+                
                 const a = document.createElement('a');
                 a.style.display = 'none';
                 a.href = url;
                 a.download = fileName;
                 document.body.appendChild(a);
                 a.click();
-                window.URL.revokeObjectURL(url);
+                
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                }, 100);
+                
                 status.innerText = "✅ ডাউনলোড সফল হয়েছে!";
             } catch (e) {
-                // সরাসরি না হলে নতুন ট্যাবে ওপেন হবে
-                window.open(fileUrl, '_blank');
-                status.innerText = "⚠️ সরাসরি না হলে নতুন পেজ থেকে সেভ করুন।";
+                // যদি Blob মেথড কাজ না করে তবে সরাসরি লিঙ্কে নিয়ে যাবে
+                status.innerText = "⚠️ অটোমেটিক ডাউনলোড না হলে নতুন পেজের 3-dot থেকে সেভ করুন।";
+                window.location.href = fileUrl; 
             } finally {
                 setTimeout(() => {
-                    btn.innerHTML = originalText;
+                    btn.innerHTML = originalBtnText;
                     btn.disabled = false;
                 }, 3000);
             }
