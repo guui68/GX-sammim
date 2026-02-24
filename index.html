@@ -30,85 +30,93 @@
             padding: 30px; border-radius: 40px;
             box-shadow: 0 30px 60px rgba(0,0,0,0.6);
             border: 1px solid rgba(255,255,255,0.12);
-            text-align: center;
+            text-align: center; position: relative;
         }
 
-        h1 { font-size: 28px; font-weight: 800; margin-bottom: 25px; 
+        h1 { font-size: 26px; font-weight: 800; margin-bottom: 25px; 
              background: linear-gradient(135deg, #fff, var(--primary));
              -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
         .input-group {
             display: flex; background: #fff;
-            border-radius: 20px; padding: 6px; margin-bottom: 20px;
+            border-radius: 18px; padding: 5px; margin-bottom: 15px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
 
         input {
-            flex: 1; border: none; padding: 14px;
-            font-size: 15px; outline: none; color: #111;
+            flex: 1; border: none; padding: 12px;
+            font-size: 14px; outline: none; color: #111;
             background: transparent; font-weight: 600;
         }
 
         .paste-btn {
             background: #4f46e5; color: white; border: none;
-            padding: 10px 20px; border-radius: 16px;
+            padding: 8px 15px; border-radius: 14px;
             font-weight: 700; cursor: pointer; transition: 0.3s;
         }
 
+        /* মেইন বাটন চিকন করা হয়েছে */
         .fetch-btn {
-            width: 100%; padding: 18px; 
+            width: 100%; padding: 12px; 
             background: linear-gradient(45deg, #00c853, #00ffa3);
-            color: #052e16; border: none; border-radius: 22px;
-            font-weight: 800; font-size: 17px; cursor: pointer;
-            box-shadow: 0 10px 20px rgba(0, 255, 163, 0.2);
+            color: #052e16; border: none; border-radius: 15px;
+            font-weight: 800; font-size: 15px; cursor: pointer;
             transition: 0.4s;
         }
-        .fetch-btn:hover { transform: scale(1.02); filter: brightness(1.1); }
 
-        #result-area { display: none; margin-top: 30px; animation: slideUp 0.6s ease; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        /* নিচে প্রসেসিং টেক্সট */
+        #processing-text {
+            display: none; margin-top: 10px; font-size: 13px; color: var(--accent);
+            letter-spacing: 1px; animation: blink 1s infinite;
+        }
+        @keyframes blink { 50% { opacity: 0.5; } }
 
-        .video-card {
-            background: rgba(255,255,255,0.06); padding: 18px;
-            border-radius: 28px; margin-bottom: 20px; text-align: left;
-            border: 1px solid rgba(255,255,255,0.1);
-            display: flex; align-items: center; gap: 15px;
+        #result-area { display: none; margin-top: 25px; animation: slideUp 0.5s ease; position: relative; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ক্লোজ বাটন */
+        .close-btn {
+            position: absolute; top: -10px; right: -10px;
+            background: #ff4757; color: white; border: none;
+            width: 25px; height: 25px; border-radius: 50%;
+            cursor: pointer; font-weight: bold; font-size: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 10;
         }
 
-        #user-img { width: 55px; height: 55px; border-radius: 50%; border: 2px solid var(--primary); padding: 2px; }
-        .user-info h4 { margin: 0; font-size: 16px; color: var(--primary); }
-        .user-info p { margin: 4px 0 0; font-size: 12px; opacity: 0.8; line-height: 1.4; }
+        .video-card {
+            background: rgba(255,255,255,0.06); padding: 15px;
+            border-radius: 22px; margin-bottom: 15px; text-align: left;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex; align-items: center; gap: 12px;
+        }
+
+        #user-img { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--primary); }
+        .user-info h4 { margin: 0; font-size: 15px; color: var(--primary); }
+        .user-info p { margin: 3px 0 0; font-size: 11px; opacity: 0.8; }
 
         .dl-group { display: flex; flex-direction: column; gap: 10px; }
         
-        /* বাটন চিকন করা হয়েছে এখানে */
         .dl-btn {
-            padding: 12px; border: none; border-radius: 15px;
+            padding: 12px; border: none; border-radius: 14px;
             font-weight: 700; font-size: 14px; cursor: pointer;
-            color: white; display: flex; align-items: center; justify-content: center; gap: 10px;
+            color: white; display: flex; align-items: center; justify-content: center; gap: 8px;
             transition: 0.3s;
         }
         
-        .btn-1 { background: linear-gradient(135deg, #2563eb, #3b82f6); box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2); } 
-        .btn-2 { background: linear-gradient(135deg, #7c3aed, #a855f7); box-shadow: 0 4px 10px rgba(124, 58, 237, 0.2); } 
-        .btn-3 { background: linear-gradient(135deg, #0891b2, #06b6d4); } 
+        .btn-1 { background: linear-gradient(135deg, #2563eb, #3b82f6); } 
+        .btn-2 { background: linear-gradient(135deg, #7c3aed, #a855f7); } 
         .btn-audio { background: linear-gradient(135deg, #f43f5e, #fb7185); }
-        .btn-photo { background: #f59e0b; font-size: 11px; padding: 10px; border-radius: 12px; }
-
-        .dl-btn:active { transform: scale(0.96); }
 
         #loading-container {
-            display: none; margin-top: 20px; background: rgba(0,0,0,0.5);
-            padding: 20px; border-radius: 25px; border: 1px solid var(--primary);
+            display: none; margin-top: 15px; background: rgba(0,0,0,0.4);
+            padding: 15px; border-radius: 20px;
         }
 
-        .p-bar-bg { width: 100%; height: 10px; background: #000; border-radius: 10px; overflow: hidden; margin-top: 10px; }
-        .p-bar-fill { width: 0%; height: 100%; background: linear-gradient(to right, var(--primary), var(--accent)); transition: width 0.3s; }
+        .p-bar-bg { width: 100%; height: 8px; background: #000; border-radius: 10px; overflow: hidden; margin-top: 8px; }
+        .p-bar-fill { width: 0%; height: 100%; background: var(--primary); transition: width 0.3s; }
 
-        .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        
-        .footer { margin-top: 40px; font-size: 13px; opacity: 0.5; }
-        .footer a { color: var(--primary); text-decoration: none; font-weight: 700; }
+        .footer { margin-top: 30px; font-size: 12px; opacity: 0.5; }
+        .footer a { color: var(--primary); text-decoration: none; }
     </style>
 </head>
 <body>
@@ -122,8 +130,10 @@
     </div>
 
     <button class="fetch-btn" id="fetchBtn" onclick="handleFetch()">🚀 ডাউনলোড লিঙ্ক খুঁজুন</button>
+    <div id="processing-text">🔍 তথ্য খোঁজা হচ্ছে, দয়া করে অপেক্ষা করুন...</div>
 
     <div id="result-area">
+        <button class="close-btn" onclick="closeResult()">✕</button>
         <div class="video-card">
             <img id="user-img" src="" alt="">
             <div class="user-info">
@@ -135,8 +145,8 @@
         <div id="download-options" class="dl-group"></div>
 
         <div id="loading-container">
-            <div style="display: flex; justify-content: space-between; font-size: 13px;">
-                <span id="loaderStatus">ডাউনলোড হচ্ছে...</span>
+            <div style="display: flex; justify-content: space-between; font-size: 12px;">
+                <span>ডাউনলোড হচ্ছে...</span>
                 <span id="pPercent">0%</span>
             </div>
             <div class="p-bar-bg"><div class="p-bar-fill" id="pBar"></div></div>
@@ -157,19 +167,25 @@
         } catch (e) {}
     }
 
+    function closeResult() {
+        document.getElementById("result-area").style.display = "none";
+        document.getElementById("urlInput").value = "";
+    }
+
     async function handleFetch() {
         const url = document.getElementById("urlInput").value.trim();
         if (!url.includes("tiktok.com")) return alert("সঠিক টিকটক লিঙ্ক দিন!");
 
-        const fetchBtn = document.getElementById("fetchBtn");
+        const procText = document.getElementById("processing-text");
         const resultArea = document.getElementById("result-area");
+        const fetchBtn = document.getElementById("fetchBtn");
 
         resultArea.style.display = "none";
-        fetchBtn.innerText = "🔍 প্রসেসিং হচ্ছে...";
+        procText.style.display = "block";
         fetchBtn.disabled = true;
 
         try {
-            // একসাথে দুটি রিকোয়েস্ট পাঠানো হচ্ছে (Parallel Fetching) যাতে দ্রুত কাজ করে
+            // একসাথে দুটি এপিআই কল করে গতি বাড়ানো হয়েছে
             const [res1, res2] = await Promise.all([
                 fetch(`https://tikwm.com/api/?url=${encodeURIComponent(url)}`),
                 fetch(`https://tikwm.com/api/?url=${encodeURIComponent(url)}&hd=1`)
@@ -181,12 +197,12 @@
             if (data1.data) {
                 renderResult(data1.data, data2.data);
             } else {
-                alert("ভিডিও খুঁজে পাওয়া যায়নি!");
+                alert("ভিডিও পাওয়া যায়নি!");
             }
         } catch (err) {
-            alert("কানেকশন এরর! আবার চেষ্টা করুন।");
+            alert("ত্রুটি হয়েছে! আবার চেষ্টা করুন।");
         } finally {
-            fetchBtn.innerText = "🚀 ডাউনলোড লিঙ্ক খুঁজুন";
+            procText.style.display = "none";
             fetchBtn.disabled = false;
         }
     }
@@ -200,28 +216,10 @@
         group.innerHTML = ""; 
 
         if (standard.play) {
-            // ডাউনলোড ১ (Standard Server)
-            addBtn(group, "📥 ডাউনলোড ১ (Server 1)", "btn-1", () => startDownload(standard.play, "GX_Video_S1.mp4"));
-            
-            // ডাউনলোড ২ (HD Server)
+            addBtn(group, "📥 ডাউনলোড ১ (Server 1)", "btn-1", () => startDownload(standard.play, "GX_Video.mp4"));
             const hdUrl = (hd && hd.hdplay) ? hd.hdplay : (standard.hdplay || standard.play);
             addBtn(group, "🚀 ডাউনলোড ২ (HD Server)", "btn-2", () => startDownload(hdUrl, "GX_Video_HD.mp4"));
-            
-            // ডাউনলোড ৩ (Direct Browser)
-            addBtn(group, "🌐 ডাউনলোড ৩ (Browser)", "btn-3", () => window.open(standard.play, '_blank'));
         }
-
-        // ফটো স্লাইড শো হলে
-        if (standard.images && standard.images.length > 0) {
-            const grid = document.createElement('div');
-            grid.className = "photo-grid";
-            standard.images.forEach((img, i) => {
-                addBtn(grid, `ফটো ${i+1}`, "btn-photo", () => startDownload(img, `Photo_${i+1}.jpg`));
-            });
-            group.appendChild(grid);
-        }
-
-        // অডিও ফাইল
         addBtn(group, "🎵 অডিও ডাউনলোড (MP3)", "btn-audio", () => startDownload(standard.music, "Audio.mp3"));
 
         document.getElementById("result-area").style.display = "block";
@@ -245,8 +243,8 @@
         
         let progress = 0;
         let timer = setInterval(() => {
-            if (progress < 95) { progress += 5; bar.style.width = progress + "%"; per.innerText = progress + "%"; }
-        }, 150);
+            if (progress < 90) { progress += 10; bar.style.width = progress + "%"; per.innerText = progress + "%"; }
+        }, 100);
 
         try {
             const res = await fetch(url);
