@@ -3,167 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XG TikTok Downloader</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>XG Sammim TikTok Downloader</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #00ffa3;
-            --bg: #0f172a;
-            --card: #1e293b;
+            --primary: #00f2fe;
+            --secondary: #4facfe;
+            --accent: #00ffa3;
+            --dark-bg: #0b0e14;
         }
 
         body {
             margin: 0; padding: 20px;
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
-            color: white;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            min-height: 100vh;
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--dark-bg);
+            background-image: radial-gradient(circle at 50% 10%, #1e2631 0%, #0b0e14 100%);
+            color: white; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; min-height: 100vh;
         }
 
         .container {
-            width: 100%; max-width: 400px;
-            background: var(--card);
-            padding: 25px; border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            width: 100%; max-width: 420px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            padding: 30px; border-radius: 30px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
             border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
         }
 
-        h1 { font-size: 22px; font-weight: 700; margin-bottom: 20px; text-align: center; color: var(--primary); }
+        h1 { font-size: 26px; font-weight: 800; margin-bottom: 25px; 
+             background: linear-gradient(to right, var(--primary), var(--secondary));
+             -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        /* ইনপুট এরিয়া */
+        /* ইনপুট গ্রুপ */
         .input-wrapper {
-            position: relative;
-            display: flex;
-            background: white;
-            border-radius: 12px;
-            padding: 5px;
-            margin-bottom: 15px;
-            align-items: center;
+            display: flex; background: rgba(255, 255, 255, 0.95);
+            border-radius: 18px; padding: 6px; margin-bottom: 15px;
+            align-items: center; box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
 
         input {
-            flex: 1; border: none; padding: 12px;
-            font-size: 14px; outline: none; color: #333;
-            background: transparent;
+            flex: 1; border: none; padding: 12px 15px;
+            font-size: 15px; outline: none; color: #1a1a1a;
+            background: transparent; font-weight: 600;
         }
 
         .clear-btn {
-            background: #e2e8f0; border: none; color: #64748b;
-            width: 24px; height: 24px; border-radius: 50%;
+            background: #e5e7eb; border: none; color: #374151;
+            width: 26px; height: 26px; border-radius: 50%;
             cursor: pointer; display: none; margin-right: 8px;
-            font-size: 12px; font-weight: bold;
+            font-size: 12px; font-weight: bold; transition: 0.2s;
         }
+        .clear-btn:hover { background: #d1d5db; }
 
         .paste-btn {
-            background: #6366f1; color: white; border: none;
-            padding: 10px 15px; border-radius: 8px;
-            font-weight: 600; cursor: pointer; font-size: 13px;
+            background: #4f46e5; color: white; border: none;
+            padding: 10px 18px; border-radius: 14px;
+            font-weight: 700; cursor: pointer; font-size: 13px;
         }
 
         .fetch-btn {
-            width: 100%; padding: 14px; background: var(--primary);
-            color: #064e3b; border: none; border-radius: 12px;
-            font-weight: 700; cursor: pointer; font-size: 16px;
+            width: 100%; padding: 16px; 
+            background: linear-gradient(45deg, #00c853, #00ffa3);
+            color: #052e16; border: none; border-radius: 18px;
+            font-weight: 800; font-size: 16px; cursor: pointer;
+            transition: 0.3s; margin-top: 5px;
+        }
+        .fetch-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,255,163,0.3); }
+
+        /* রেজাল্ট কার্ড */
+        #result-area { display: none; margin-top: 25px; animation: fadeIn 0.5s ease forwards; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        .video-card {
+            background: rgba(255,255,255,0.06); padding: 15px;
+            border-radius: 22px; margin-bottom: 15px; text-align: left;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .profile-row { display: flex; align-items: center; gap: 15px; }
+        #user-img { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--primary); }
+        .user-info h4 { margin: 0; font-size: 15px; color: var(--primary); }
+        .user-info p { margin: 3px 0 0; font-size: 12px; opacity: 0.7; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+
+        .dl-group { display: flex; flex-direction: column; gap: 12px; }
+        .dl-btn {
+            padding: 15px; border: none; border-radius: 15px;
+            font-weight: 700; font-size: 14px; cursor: pointer;
+            color: white; display: flex; align-items: center; justify-content: center; gap: 10px;
             transition: 0.2s;
         }
+        .v-btn { background: #3b82f6; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); }
+        .a-btn { background: #f43f5e; box-shadow: 0 4px 15px rgba(244, 63, 94, 0.3); }
 
-        /* ভিডিও কার্ড */
-        #result-area { display: none; margin-top: 25px; animation: slideUp 0.3s ease; }
-        
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .info-box {
-            display: flex; align-items: center; gap: 12px;
-            background: rgba(255,255,255,0.05);
-            padding: 12px; border-radius: 15px; margin-bottom: 15px;
+        /* প্রিমিয়াম লোডিং ওভারলে */
+        #loading-overlay {
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px); z-index: 999;
+            flex-direction: column; align-items: center; justify-content: center;
         }
 
-        #user-img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--primary); }
-        .user-meta h4 { margin: 0; font-size: 14px; color: var(--primary); }
-        .user-meta p { margin: 2px 0 0; font-size: 12px; opacity: 0.7; }
-
-        /* বাটন ডিজাইন */
-        .dl-btns { display: flex; flex-direction: column; gap: 10px; }
-        .btn {
-            padding: 12px; border: none; border-radius: 10px;
-            font-weight: 700; cursor: pointer; color: white;
-            font-size: 14px; transition: 0.2s;
+        .loader-box {
+            background: #1e293b; padding: 30px; border-radius: 25px;
+            border: 1px solid var(--primary); text-align: center;
+            width: 80%; max-width: 300px;
         }
-        .v-btn { background: #3b82f6; }
-        .a-btn { background: #ec4899; }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* প্রসেসিং বার */
-        #loader-container { display: none; margin-top: 15px; text-align: left; }
-        .status-msg { font-size: 12px; margin-bottom: 5px; color: #fbbf24; font-weight: 600; }
-        .bar-bg { height: 6px; background: #0f172a; border-radius: 10px; overflow: hidden; }
-        .bar-fill { height: 100%; width: 0%; background: var(--primary); transition: width 0.2s; }
+        .spinner {
+            width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1);
+            border-top: 4px solid var(--primary); border-radius: 50%;
+            animation: spin 1s linear infinite; margin: 0 auto 20px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        .footer { margin-top: 30px; text-align: center; font-size: 12px; opacity: 0.5; }
-        .footer a { color: var(--primary); text-decoration: none; }
+        .progress-text { font-weight: 700; color: white; margin-bottom: 10px; }
+        .p-bar-bg { width: 100%; height: 8px; background: #0f172a; border-radius: 10px; overflow: hidden; }
+        .p-bar-fill { width: 0%; height: 100%; background: var(--primary); box-shadow: 0 0 10px var(--primary); transition: width 0.3s; }
+
+        .footer { margin-top: 30px; font-size: 13px; opacity: 0.6; }
+        .footer a { color: var(--primary); text-decoration: none; font-weight: 700; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>TikTok Saver</h1>
+    <h1>TikTok Downloader</h1>
 
     <div class="input-wrapper">
-        <input type="text" id="urlInput" placeholder="Paste TikTok Link..." oninput="checkInput()">
+        <input type="text" id="urlInput" placeholder="Paste link here..." oninput="checkInput()">
         <button class="clear-btn" id="clearBtn" onclick="clearInput()">✕</button>
         <button class="paste-btn" onclick="pasteUrl()">Paste</button>
     </div>
 
-    <button class="fetch-btn" id="fetchBtn" onclick="handleFetch()">Find Video</button>
+    <button class="fetch-btn" id="fetchBtn" onclick="handleFetch()">Find Video Info</button>
 
     <div id="result-area">
-        <div class="info-box">
-            <img id="user-img" src="" alt="">
-            <div class="user-meta">
-                <h4 id="user-name"></h4>
-                <p id="video-title"></p>
+        <div class="video-card">
+            <div class="profile-row">
+                <img id="user-img" src="" alt="">
+                <div class="user-info">
+                    <h4 id="user-name"></h4>
+                    <p id="video-title"></p>
+                </div>
             </div>
         </div>
-        <div class="dl-btns">
-            <button class="btn v-btn" id="dlVid">📥 Download No Watermark</button>
-            <button class="btn a-btn" id="dlAud">🎵 Download Audio MP3</button>
+        <div class="dl-group">
+            <button class="dl-btn v-btn" id="dlVid">📥 Download Video (No WM)</button>
+            <button class="dl-btn a-btn" id="dlAud">🎵 Download Audio (MP3)</button>
         </div>
-    </div>
-
-    <div id="loader-container">
-        <div class="status-msg" id="statusMsg">Processing...</div>
-        <div class="bar-bg"><div class="bar-fill" id="barFill"></div></div>
     </div>
 
     <div class="footer">
         Created by <b>GX Sammim</b><br><br>
-        <a href="https://t.me/sammim14">Telegram</a> • <a href="https://facebook.com">Facebook</a>
+        <a href="https://t.me/sammim14" target="_blank">Telegram</a> • 
+        <a href="https://www.facebook.com/share/1SD3SzGTyj/" target="_blank">Facebook</a>
+    </div>
+</div>
+
+<div id="loading-overlay">
+    <div class="loader-box">
+        <div class="spinner"></div>
+        <div class="progress-text" id="loaderStatus">Processing...</div>
+        <div class="p-bar-bg"><div class="p-bar-fill" id="pBar"></div></div>
     </div>
 </div>
 
 <script>
-    // ইনপুট চেক করে ক্লোজ বাটন দেখানো
+    // ইনপুট চেক
     function checkInput() {
         const input = document.getElementById("urlInput");
         const clearBtn = document.getElementById("clearBtn");
         clearBtn.style.display = input.value.length > 0 ? "block" : "none";
     }
 
-    // ক্লোজ বাটনের কাজ
+    // ক্লোজ/ক্লিয়ার বাটন ফাংশন
     function clearInput() {
         document.getElementById("urlInput").value = "";
         checkInput();
-        resetAll();
-    }
-
-    // সব রিসেট করা যাতে রিফ্রেশ ছাড়া আবার কাজ করা যায়
-    function resetAll() {
         document.getElementById("result-area").style.display = "none";
-        document.getElementById("loader-container").style.display = "none";
-        document.getElementById("barFill").style.width = "0%";
     }
 
+    // পেস্ট ফাংশন
     async function pasteUrl() {
         try {
             const text = await navigator.clipboard.readText();
@@ -172,14 +195,16 @@
         } catch (e) {}
     }
 
+    // মেইন ফেচ ফাংশন (রিফ্রেশ ছাড়া বারবার কাজের জন্য)
     async function handleFetch() {
         const url = document.getElementById("urlInput").value.trim();
-        if (!url.includes("tiktok.com")) return alert("Please enter a valid link!");
+        if (!url.includes("tiktok.com")) return alert("Please paste a valid TikTok link!");
 
-        resetAll();
+        // রিসেট ও লোডিং
+        document.getElementById("result-area").style.display = "none";
         const fetchBtn = document.getElementById("fetchBtn");
         fetchBtn.disabled = true;
-        fetchBtn.innerText = "Searching...";
+        fetchBtn.innerText = "Finding...";
 
         try {
             const res = await fetch(`https://tikwm.com/api/?url=${encodeURIComponent(url)}`);
@@ -188,63 +213,75 @@
             if (json.data) {
                 showResult(json.data);
             } else {
-                alert("Video not found!");
+                alert("Video not found or link expired!");
             }
         } catch (e) {
-            alert("Connection error!");
+            alert("Connection error! Please try again.");
         } finally {
             fetchBtn.disabled = false;
-            fetchBtn.innerText = "Find Video";
+            fetchBtn.innerText = "Find Video Info";
         }
     }
 
     function showResult(data) {
         document.getElementById("user-img").src = data.author.avatar;
         document.getElementById("user-name").innerText = "@" + data.author.nickname;
-        document.getElementById("video-title").innerText = data.title || "No Title";
+        document.getElementById("video-title").innerText = data.title || "TikTok Video";
         
+        // বাটন ফাংশন সেট করা
         setupDownload(document.getElementById("dlVid"), data.play, "GX_Video.mp4");
         setupDownload(document.getElementById("dlAud"), data.music, "GX_Audio.mp3");
 
         document.getElementById("result-area").style.display = "block";
     }
 
+    // ডাউনলোড প্রসেসিং ফাংশন (বারবার ডাউনলোড করার উপযোগী)
     function setupDownload(btn, fileUrl, fileName) {
         btn.onclick = async function() {
-            const loader = document.getElementById("loader-container");
-            const fill = document.getElementById("barFill");
-            const msg = document.getElementById("statusMsg");
+            const overlay = document.getElementById("loading-overlay");
+            const fill = document.getElementById("pBar");
+            const statusText = document.getElementById("loaderStatus");
 
+            // UI আপডেট
+            overlay.style.display = "flex";
+            fill.style.width = "0%";
+            statusText.innerText = "Downloading...";
             btn.disabled = true;
-            loader.style.display = "block";
-            msg.innerText = "📥 Downloading to server...";
             
-            // এনিমেটেড বার
-            let w = 0;
-            let interval = setInterval(() => {
-                if (w < 90) { w += 2; fill.style.width = w + "%"; }
+            let progress = 0;
+            let progressTimer = setInterval(() => {
+                if (progress < 90) {
+                    progress += 2;
+                    fill.style.width = progress + "%";
+                }
             }, 100);
 
             try {
                 const response = await fetch(fileUrl);
                 const blob = await response.blob();
-                clearInterval(interval);
+                
+                clearInterval(progressTimer);
                 fill.style.width = "100%";
-                msg.innerText = "✅ Saved Successfully!";
+                statusText.innerText = "Starting Download...";
 
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url; a.download = fileName;
                 document.body.appendChild(a);
                 a.click();
+                document.body.removeChild(a);
                 window.URL.revokeObjectURL(url);
                 
-                setTimeout(() => { 
-                    loader.style.display = "none"; 
-                    btn.disabled = false;
-                }, 2000);
+                // ডাউনলোড শেষ হলে লোডিং লুকানো এবং বাটন রিস্টোর করা
+                setTimeout(() => {
+                    overlay.style.display = "none";
+                    btn.disabled = false; // এখানে বাটন আবার অ্যাক্টিভ করা হয়েছে যাতে রিফ্রেশ ছাড়া ডাউনলোড করা যায়
+                }, 1500);
+
             } catch (e) {
+                // ইরর হলে ডাইরেক্ট লিঙ্ক ওপেন
                 window.open(fileUrl, '_blank');
+                overlay.style.display = "none";
                 btn.disabled = false;
             }
         };
