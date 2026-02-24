@@ -65,12 +65,14 @@
             transition: 0.3s;
         }
 
+        /* প্রসেসিং বক্স ফিক্সড */
         .loader-container {
             display: none; margin-top: 20px; text-align: left;
+            animation: fadeIn 0.3s ease;
         }
         .loader-info { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; color: var(--primary); }
         .bar-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
-        .bar-fill { width: 0%; height: 100%; background: var(--primary); transition: 0.3s; }
+        .bar-fill { width: 0%; height: 100%; background: var(--primary); transition: 0.2s linear; }
 
         #info-box {
             display: none; background: rgba(0,0,0,0.3); padding: 12px; 
@@ -99,17 +101,21 @@
             padding: 13px; border: none; border-radius: 15px;
             font-weight: 700; font-size: 13px; cursor: pointer; color: white;
             text-align: center; text-decoration: none; display: block;
+            transition: 0.2s;
         }
         .btn-s1 { background: #2563eb; }
         .btn-s2 { background: #7c3aed; }
         .btn-browser { background: #0891b2; }
         .btn-mp3 { background: #f43f5e; }
+        .dl-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .footer { margin-top: 35px; }
         .social-links { margin-top: 15px; display: flex; justify-content: center; gap: 20px; }
         .social-links a { text-decoration: none; font-weight: 800; font-size: 14px; }
         .tg { color: #0088cc; }
         .fb { color: #1877f2; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -172,47 +178,29 @@
     function updateLoader(txt, val) {
         document.getElementById("loadingBox").style.display = "block";
         document.getElementById("status").innerText = txt;
-        document.getElementById("percent").innerText = val + "%";
+        document.getElementById("percent").innerText = Math.round(val) + "%";
         document.getElementById("bar").style.width = val + "%";
     }
 
     async function startFetch() {
         currentUrl = document.getElementById("urlInput").value.trim();
-        
-        // ভ্যালিডেশন: লিঙ্ক অবশ্যই tiktok.com থাকতে হবে
-        if(!currentUrl.includes("tiktok.com")) {
-            alert("ভুল লিঙ্ক! দয়া করে একটি সঠিক TikTok ভিডিও লিঙ্ক দিন।");
-            return;
-        }
+        if(!currentUrl.includes("tiktok.com")) return alert("সঠিক TikTok লিঙ্ক দিন!");
 
-        updateLoader("তথ্য সংগ্রহ করা হচ্ছে...", 40);
+        updateLoader("তথ্য সংগ্রহ করা হচ্ছে...", 30);
 
         try {
-            // সার্ভার ১ কল
             const r = await fetch(`https://tikwm.com/api/?url=${encodeURIComponent(currentUrl)}&hd=1`);
             const j = await r.json();
-            
-            if(j.data) {
-                showFinal(j.data);
-            } else {
-                throw new Error("Server 1 failed");
-            }
+            if(j.data) showFinal(j.data);
+            else throw "err";
         } catch(e) {
-            updateLoader("সার্ভার ১ ব্যস্ত, সার্ভার ২ ট্রাই করছি...", 70);
+            updateLoader("সার্ভার ১ ব্যস্ত, বিকল্প খুঁজছি...", 60);
             try {
-                // অটো ফলব্যাক সার্ভার ২
                 const r2 = await fetch(`https://www.tikwm.com/api/?url=${encodeURIComponent(currentUrl)}`);
                 const j2 = await r2.json();
-                if(j2.data) {
-                    showFinal(j2.data);
-                } else {
-                    alert("দুঃখিত, কোনো সার্ভারই কাজ করছে না!");
-                    reset();
-                }
-            } catch(err) {
-                alert("এরর! নেটওয়ার্ক চেক করুন।");
-                reset();
-            }
+                if(j2.data) showFinal(j2.data);
+                else { alert("সার্ভার ডাউন!"); reset(); }
+            } catch(err) { alert("Error!"); reset(); }
         }
     }
 
@@ -221,7 +209,6 @@
         setTimeout(() => {
             document.getElementById("loadingBox").style.display = "none";
             document.getElementById("main-view").style.display = "none";
-            
             document.getElementById("link-txt").innerText = "লিঙ্ক: " + currentUrl;
             document.getElementById("info-box").style.display = "block";
             
@@ -229,40 +216,61 @@
             document.getElementById("user-name").innerText = "@" + data.author.nickname;
             document.getElementById("video-title").innerText = data.title || "TikTok Video";
             
-            const videoUrl = data.play;
-            const musicUrl = data.music;
-
             const btnBox = document.getElementById("dl-buttons");
-            // এখন সার্ভার ২ ও ডাউনলোড কাজ করবে কারণ এটি সরাসরি ডাটা থেকে লিঙ্ক পাচ্ছে
             btnBox.innerHTML = `
-                <button class="dl-btn btn-s1" onclick="downloadFile('${videoUrl}', 'Video_S1.mp4')">🚀 ডাউনলোড ১ (Server 1)</button>
-                <button class="dl-btn btn-s2" onclick="downloadFile('${videoUrl}', 'Video_S2.mp4')">📥 ডাউনলোড ২ (Server 2)</button>
-                <a href="${videoUrl}" target="_blank" class="dl-btn btn-browser">🌐 ব্রাউজার ডাউনলোড</a>
-                <button class="dl-btn btn-mp3" onclick="downloadFile('${musicUrl}', 'Music.mp3')">🎵 অডিও ডাউনলোড (MP3)</button>
+                <button class="dl-btn btn-s1" onclick="handleDownload('${data.play}', 'Video_S1.mp4', this)">🚀 ডাউনলোড ১ (Server 1)</button>
+                <button class="dl-btn btn-s2" onclick="handleDownload('${data.play}', 'Video_S2.mp4', this)">📥 ডাউনলোড ২ (Server 2)</button>
+                <a href="${data.play}" target="_blank" class="dl-btn btn-browser">🌐 ব্রাউজার ডাউনলোড</a>
+                <button class="dl-btn btn-mp3" onclick="handleDownload('${data.music}', 'Music.mp3', this)">🎵 অডিও ডাউনলোড (MP3)</button>
             `;
             document.getElementById("result-area").style.display = "block";
         }, 500);
     }
 
-    async function downloadFile(url, name) {
-        updateLoader("ডাউনলোড শুরু হচ্ছে...", 50);
-        document.getElementById("loadingBox").style.display = "block";
+    // ডাউনলোড হ্যান্ডেলার (একসাথে একাধিক ডাউনলোড সাপোর্ট করবে)
+    async function handleDownload(url, filename, btn) {
+        btn.disabled = true; // একই বাটনে বারবার চাপ দেওয়া বন্ধ
+        updateLoader("ফাইল কানেক্ট করা হচ্ছে...", 10);
         
         try {
             const response = await fetch(url);
-            const blob = await response.blob();
-            const downloadUrl = window.URL.createObjectURL(blob);
+            if (!response.ok) throw new Error();
+
+            const reader = response.body.getReader();
+            const contentLength = +response.headers.get('Content-Length');
+            let receivedLength = 0;
+            let chunks = [];
+
+            while(true) {
+                const {done, value} = await reader.read();
+                if (done) break;
+                chunks.push(value);
+                receivedLength += value.length;
+                
+                // ডাউনলোড বার আপডেট
+                if (contentLength) {
+                    let step = (receivedLength / contentLength) * 100;
+                    updateLoader("ডাউনলোড হচ্ছে...", step);
+                }
+            }
+
+            const blob = new Blob(chunks);
+            const dUrl = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.href = downloadUrl;
-            a.download = name;
-            document.body.appendChild(a);
+            a.href = dUrl;
+            a.download = filename;
             a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(downloadUrl);
-            updateLoader("সফল!", 100);
-            setTimeout(() => { document.getElementById("loadingBox").style.display = "none"; }, 1500);
+            window.URL.revokeObjectURL(dUrl);
+            
+            updateLoader("ডাউনলোড সফল!", 100);
+            setTimeout(() => { 
+                document.getElementById("loadingBox").style.display = "none";
+                btn.disabled = false;
+            }, 2000);
+
         } catch (error) {
-            window.open(url, '_blank');
+            window.open(url, '_blank'); // কোনো সমস্যা হলে ব্রাউজারে ওপেন হবে
+            btn.disabled = false;
             document.getElementById("loadingBox").style.display = "none";
         }
     }
