@@ -9,16 +9,14 @@
         :root {
             --primary: #00f2fe;
             --accent: #00ffa3;
-            --bg-dark: #05070a; /* আরও ডিপ ডার্ক ব্যাকগ্রাউন্ড */
-            --card-bg: #0d1117;
-            --glass: rgba(255, 255, 255, 0.03);
+            --bg-dark: #12161f; 
+            --card-bg: #1c222d;
         }
 
         body {
             margin: 0; padding: 20px;
             font-family: 'Outfit', sans-serif;
             background-color: var(--bg-dark);
-            background-image: radial-gradient(circle at top right, rgba(0, 242, 254, 0.08), transparent 40%);
             color: white; display: flex; flex-direction: column; 
             align-items: center; justify-content: center; min-height: 100vh;
         }
@@ -26,24 +24,20 @@
         .container {
             width: 100%; max-width: 380px;
             background: var(--card-bg);
-            padding: 25px; border-radius: 30px;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
-            border: 1px solid rgba(255,255,255,0.05);
+            padding: 25px; border-radius: 28px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.08);
             text-align: center;
         }
 
-        h1 { font-size: 24px; font-weight: 800; margin-bottom: 25px; letter-spacing: -0.5px;
+        h1 { font-size: 24px; font-weight: 800; margin-bottom: 25px; 
              background: linear-gradient(135deg, #fff, var(--primary));
              -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        /* প্রিমিয়াম ইনপুট বক্স উইথ ক্লোজ বাটন */
         .input-wrapper {
-            position: relative;
-            background: #fff;
-            border-radius: 15px;
-            display: flex; align-items: center;
-            padding: 5px 10px; margin-bottom: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            position: relative; background: #fff;
+            border-radius: 12px; display: flex; align-items: center;
+            padding: 4px 8px; margin-bottom: 12px;
         }
 
         input {
@@ -53,46 +47,43 @@
         }
 
         .clear-btn {
-            background: #eee; color: #666; border: none;
-            width: 22px; height: 22px; border-radius: 50%;
+            background: #f0f0f0; color: #999; border: none;
+            width: 24px; height: 24px; border-radius: 50%;
             font-size: 12px; cursor: pointer; display: none;
             align-items: center; justify-content: center; margin-right: 5px;
         }
 
         .paste-btn {
             background: #4f46e5; color: white; border: none;
-            padding: 8px 15px; border-radius: 10px;
-            font-weight: 700; cursor: pointer; font-size: 12px;
+            padding: 7px 12px; border-radius: 8px;
+            font-weight: 700; cursor: pointer; font-size: 11px;
         }
 
-        /* চিকন প্রিমিয়াম বাটন */
         .fetch-btn {
             width: 100%; padding: 12px; 
             background: linear-gradient(45deg, #00c853, #00ffa3);
             color: #052e16; border: none; border-radius: 12px;
             font-weight: 800; font-size: 14px; cursor: pointer;
-            transition: 0.3s;
         }
 
-        /* প্রসেসিং এবং ডাউনলোড প্রগ্রেস বার */
         .progress-box {
-            display: none; margin-top: 20px; text-align: left;
-            background: rgba(255,255,255,0.03); padding: 12px; border-radius: 15px;
+            display: none; margin-top: 15px; text-align: left;
+            background: rgba(0,0,0,0.2); padding: 12px; border-radius: 12px;
         }
-        .progress-text { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 8px; color: var(--primary); }
+        .progress-text { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 6px; color: var(--primary); }
         .p-bar-bg { width: 100%; height: 6px; background: #000; border-radius: 10px; overflow: hidden; }
         .p-bar-fill { width: 0%; height: 100%; background: var(--primary); transition: width 0.3s; }
 
-        #result-area { display: none; margin-top: 25px; animation: fadeIn 0.5s ease; }
+        #result-area { display: none; margin-top: 20px; }
 
         .video-card {
             background: rgba(255,255,255,0.03); padding: 12px;
-            border-radius: 20px; margin-bottom: 15px; text-align: left;
+            border-radius: 18px; margin-bottom: 12px; text-align: left;
             border: 1px solid rgba(255,255,255,0.05);
-            display: flex; align-items: center; gap: 10px;
+            display: flex; align-items: center; gap: 12px;
         }
 
-        #user-img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--primary); }
+        #user-img { width: 45px; height: 45px; border-radius: 50%; border: 1.5px solid var(--primary); }
         .user-info h4 { margin: 0; font-size: 14px; color: #fff; }
         .user-info p { margin: 2px 0 0; font-size: 10px; opacity: 0.6; }
 
@@ -106,26 +97,24 @@
         
         .btn-1 { background: #2563eb; } 
         .btn-2 { background: #7c3aed; } 
+        .btn-3 { background: #0891b2; } 
         .btn-audio { background: #f43f5e; }
 
-        .footer { margin-top: 30px; font-size: 11px; opacity: 0.3; }
-        .footer a { color: var(--primary); text-decoration: none; }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .footer { margin-top: 30px; font-size: 11px; opacity: 0.4; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>TikTok Downloader</h1>
-
-    <div class="input-wrapper">
-        <input type="text" id="urlInput" placeholder="লিঙ্কটি এখানে দিন..." oninput="toggleClearBtn()">
-        <button class="clear-btn" id="clearBtn" onclick="clearInput()">✕</button>
-        <button class="paste-btn" onclick="pasteUrl()">Paste</button>
+    <div id="input-section">
+        <h1>TikTok Downloader</h1>
+        <div class="input-wrapper">
+            <input type="text" id="urlInput" placeholder="লিঙ্কটি এখানে দিন..." oninput="toggleClearBtn()">
+            <button class="clear-btn" id="clearBtn" onclick="resetAll()">✕</button>
+            <button class="paste-btn" onclick="pasteUrl()">Paste</button>
+        </div>
+        <button class="fetch-btn" id="fetchBtn" onclick="handleFetch()">🚀 ডাউনলোড লিঙ্ক খুঁজুন</button>
     </div>
-
-    <button class="fetch-btn" id="fetchBtn" onclick="handleFetch()">🚀 ডাউনলোড লিঙ্ক খুঁজুন</button>
     
     <div id="main-progress" class="progress-box">
         <div class="progress-text">
@@ -155,12 +144,16 @@
 <script>
     function toggleClearBtn() {
         const input = document.getElementById("urlInput");
-        const clearBtn = document.getElementById("clearBtn");
-        clearBtn.style.display = input.value.length > 0 ? "flex" : "none";
+        document.getElementById("clearBtn").style.display = input.value.length > 0 ? "flex" : "none";
     }
 
-    function clearInput() {
+    // ক্লোজ বাটনে চাপ দিলে সব রিসেট হবে
+    function resetAll() {
         document.getElementById("urlInput").value = "";
+        document.getElementById("result-area").style.display = "none";
+        document.getElementById("main-progress").style.display = "none";
+        document.getElementById("input-section").style.display = "block";
+        document.getElementById("pBar").style.width = "0%";
         toggleClearBtn();
     }
 
@@ -174,51 +167,46 @@
 
     async function handleFetch() {
         const url = document.getElementById("urlInput").value.trim();
-        if (!url.includes("tiktok.com")) return alert("সঠিক টিকটক লিঙ্ক দিন!");
+        if (!url.includes("tiktok.com")) return alert("সঠিক লিঙ্ক দিন!");
 
-        const fetchBtn = document.getElementById("fetchBtn");
+        const inputSection = document.getElementById("input-section");
         const progressBox = document.getElementById("main-progress");
-        const resultArea = document.getElementById("result-area");
         const bar = document.getElementById("pBar");
         const per = document.getElementById("pPercent");
         const statusText = document.getElementById("statusText");
 
-        resultArea.style.display = "none";
-        progressBox.style.display = "block";
         statusText.innerText = "ভিডিওর তথ্য খোঁজা হচ্ছে...";
-        fetchBtn.disabled = true;
-
-        // সিমিউলেটেড প্রগ্রেস ফর ফেচিং
+        progressBox.style.display = "block";
+        
         let p = 0;
-        let interval = setInterval(() => {
-            if (p < 90) { p += 10; bar.style.width = p + "%"; per.innerText = p + "%"; }
-        }, 100);
+        let interval = setInterval(() => { if (p < 90) { p += 10; bar.style.width = p + "%"; per.innerText = p + "%"; } }, 150);
 
         try {
+            // আপনার চাহিদা মতো দুটি এপিআই রাখা হয়েছে
             const [res1, res2] = await Promise.all([
                 fetch(`https://tikwm.com/api/?url=${encodeURIComponent(url)}`),
                 fetch(`https://tikwm.com/api/?url=${encodeURIComponent(url)}&hd=1`)
             ]);
+            
             const data1 = await res1.json();
             const data2 = await res2.json();
-
+            
             clearInterval(interval);
             bar.style.width = "100%"; per.innerText = "100%";
 
             if (data1.data) {
                 setTimeout(() => {
+                    inputSection.style.display = "none"; // তথ্য আসার পর ইনপুট সেকশন হাইড
                     progressBox.style.display = "none";
                     renderResult(data1.data, data2.data);
-                }, 500);
+                }, 400);
             } else {
                 alert("ভিডিও পাওয়া যায়নি!");
                 progressBox.style.display = "none";
             }
         } catch (err) {
-            alert("এরর হয়েছে!");
+            alert("কানেকশন এরর!");
             progressBox.style.display = "none";
-        } finally {
-            fetchBtn.disabled = false;
         }
     }
 
@@ -231,13 +219,16 @@
         group.innerHTML = ""; 
 
         if (standard.play) {
-            addBtn(group, "📥 ডাউনলোড ১ (Server 1)", "btn-1", () => startDownload(standard.play, "GX_S1.mp4"));
-            const hdUrl = (hd && hd.hdplay) ? hd.hdplay : (standard.hdplay || standard.play);
-            addBtn(group, "🚀 ডাউনলোড ২ (HD Server)", "btn-2", () => startDownload(hdUrl, "GX_HD.mp4"));
+            addBtn(group, "📥 ডাউনলোড ১ (Server 1)", "btn-1", () => startDownload(standard.play, "Video_S1.mp4"));
+            const hdUrl = (hd && hd.data && hd.data.hdplay) ? hd.data.hdplay : (standard.hdplay || standard.play);
+            addBtn(group, "🚀 ডাউনলোড ২ (HD Server)", "btn-2", () => startDownload(hdUrl, "Video_HD.mp4"));
+            addBtn(group, "🌐 ব্রাউজার ডাউনলোড", "btn-3", () => window.open(standard.play, '_blank'));
         }
-        addBtn(group, "🎵 অডিও (MP3)", "btn-audio", () => startDownload(standard.music, "GX_Audio.mp3"));
+        addBtn(group, "🎵 অডিও (MP3)", "btn-audio", () => startDownload(standard.music, "Audio.mp3"));
 
         document.getElementById("result-area").style.display = "block";
+        // রেজাল্ট আসার পর ইনপুট সেকশন হাইড থাকলেও ক্লোজ বাটনটি কাজ করবে
+        document.getElementById("input-section").style.display = "none";
     }
 
     function addBtn(parent, text, className, clickFunc) {
@@ -250,18 +241,16 @@
 
     async function startDownload(url, name) {
         const progressBox = document.getElementById("main-progress");
+        const statusText = document.getElementById("statusText");
         const bar = document.getElementById("pBar");
         const per = document.getElementById("pPercent");
-        const statusText = document.getElementById("statusText");
 
         progressBox.style.display = "block";
         statusText.innerText = "ডাউনলোড হচ্ছে...";
         bar.style.width = "0%";
         
         let p = 0;
-        let timer = setInterval(() => {
-            if (p < 95) { p += 5; bar.style.width = p + "%"; per.innerText = p + "%"; }
-        }, 200);
+        let timer = setInterval(() => { if (p < 95) { p += 5; bar.style.width = p + "%"; per.innerText = p + "%"; } }, 200);
 
         try {
             const res = await fetch(url);
@@ -273,7 +262,7 @@
             link.href = window.URL.createObjectURL(blob);
             link.download = name;
             link.click();
-            setTimeout(() => { progressBox.style.display = "none"; }, 2000);
+            setTimeout(() => { progressBox.style.display = "none"; }, 1500);
         } catch (e) {
             window.open(url, '_blank');
             progressBox.style.display = "none";
