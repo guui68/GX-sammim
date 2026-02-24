@@ -34,88 +34,43 @@
             text-align: center;
         }
 
-        h1 { 
-            font-size: 28px; font-weight: 900; margin-bottom: 25px;
-            background: linear-gradient(to right, #fff, var(--primary));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
+        h1 { font-size: 28px; font-weight: 900; margin-bottom: 25px; background: linear-gradient(to right, #fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        .input-area {
-            background: rgba(255, 255, 255, 0.07);
-            border-radius: 18px; border: 1px solid var(--border);
-            display: flex; align-items: center; padding: 5px 12px; margin-bottom: 15px;
-        }
+        .input-area { background: rgba(255, 255, 255, 0.07); border-radius: 18px; border: 1px solid var(--border); display: flex; align-items: center; padding: 5px 12px; margin-bottom: 15px; }
+        input { flex: 1; border: none; background: transparent; padding: 12px; color: white; font-size: 14px; outline: none; }
+        .paste-btn { background: #4f46e5; color: white; border: none; padding: 8px 14px; border-radius: 12px; font-weight: 700; font-size: 11px; cursor: pointer; }
 
-        input {
-            flex: 1; border: none; background: transparent;
-            padding: 12px; color: white; font-size: 14px; outline: none;
-        }
+        .fetch-btn { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--primary), var(--accent)); color: #020617; border: none; border-radius: 18px; font-weight: 900; font-size: 15px; cursor: pointer; transition: 0.3s; }
 
-        .paste-btn {
-            background: #4f46e5; color: white; border: none;
-            padding: 8px 14px; border-radius: 12px;
-            font-weight: 700; font-size: 11px; cursor: pointer;
-        }
-
-        .fetch-btn {
-            width: 100%; padding: 15px; 
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            color: #020617; border: none; border-radius: 18px;
-            font-weight: 900; font-size: 15px; cursor: pointer;
-            transition: 0.3s;
-        }
-
-        /* প্রসেসিং বক্স ফিক্সড */
-        .loader-container {
-            display: none; margin-top: 20px; text-align: left;
-            animation: fadeIn 0.3s ease;
-        }
+        /* Loader CSS */
+        .loader-container { display: none; margin-top: 20px; text-align: left; transition: 0.3s; }
         .loader-info { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; color: var(--primary); }
         .bar-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
-        .bar-fill { width: 0%; height: 100%; background: var(--primary); transition: 0.2s linear; }
+        .bar-fill { width: 0%; height: 100%; background: var(--primary); transition: 0.1s; }
 
-        #info-box {
-            display: none; background: rgba(0,0,0,0.3); padding: 12px; 
-            border-radius: 15px; margin: 20px 0; border: 1px solid var(--primary);
-            position: relative; text-align: left;
-        }
+        #info-box { display: none; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 15px; margin: 20px 0; border: 1px solid var(--primary); position: relative; text-align: left; }
         #link-txt { font-size: 11px; color: var(--primary); word-break: break-all; padding-right: 30px; display: block; }
-        .close-btn {
-            position: absolute; top: 50%; right: 10px; transform: translateY(-50%);
-            background: none; border: none; color: white; cursor: pointer; font-size: 16px;
-        }
+        .close-btn { position: absolute; top: 50%; right: 10px; transform: translateY(-50%); background: none; border: none; color: white; cursor: pointer; font-size: 16px; }
 
         #result-area { display: none; margin-top: 20px; }
-        .video-card {
-            background: rgba(255,255,255,0.03); padding: 15px;
-            border-radius: 20px; border: 1px solid var(--border);
-            display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
-        }
+        .video-card { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 20px; border: 1px solid var(--border); display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
         #user-img { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--primary); }
         .user-info { text-align: left; }
         .user-info h4 { margin: 0; font-size: 15px; }
         .user-info p { margin: 2px 0 0; font-size: 11px; opacity: 0.5; }
 
         .dl-group { display: flex; flex-direction: column; gap: 10px; }
-        .dl-btn {
-            padding: 13px; border: none; border-radius: 15px;
-            font-weight: 700; font-size: 13px; cursor: pointer; color: white;
-            text-align: center; text-decoration: none; display: block;
-            transition: 0.2s;
-        }
+        .dl-btn { padding: 13px; border: none; border-radius: 15px; font-weight: 700; font-size: 13px; cursor: pointer; color: white; text-align: center; text-decoration: none; transition: 0.2s; }
         .btn-s1 { background: #2563eb; }
         .btn-s2 { background: #7c3aed; }
         .btn-browser { background: #0891b2; }
         .btn-mp3 { background: #f43f5e; }
-        .dl-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .footer { margin-top: 35px; }
         .social-links { margin-top: 15px; display: flex; justify-content: center; gap: 20px; }
         .social-links a { text-decoration: none; font-weight: 800; font-size: 14px; }
         .tg { color: #0088cc; }
         .fb { color: #1877f2; }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -127,7 +82,7 @@
             <input type="text" id="urlInput" placeholder="TikTok লিঙ্কটি এখানে দিন...">
             <button class="paste-btn" onclick="pasteUrl()">Paste</button>
         </div>
-        <button class="fetch-btn" onclick="startFetch()">🚀 ডাউনলোড লিঙ্ক খুঁজুন</button>
+        <button class="fetch-btn" id="fetchMainBtn" onclick="startFetch()">🚀 ডাউনলোড লিঙ্ক খুঁজুন</button>
         
         <div class="loader-container" id="loadingBox">
             <div class="loader-info">
@@ -175,18 +130,23 @@
         } catch(e) { alert("Clipboard এক্সেস দিন!"); }
     }
 
-    function updateLoader(txt, val) {
-        document.getElementById("loadingBox").style.display = "block";
+    function showLoader(txt, val) {
+        const lb = document.getElementById("loadingBox");
+        lb.style.display = "block";
         document.getElementById("status").innerText = txt;
         document.getElementById("percent").innerText = Math.round(val) + "%";
         document.getElementById("bar").style.width = val + "%";
+    }
+
+    function hideLoader() {
+        document.getElementById("loadingBox").style.display = "none";
     }
 
     async function startFetch() {
         currentUrl = document.getElementById("urlInput").value.trim();
         if(!currentUrl.includes("tiktok.com")) return alert("সঠিক TikTok লিঙ্ক দিন!");
 
-        updateLoader("তথ্য সংগ্রহ করা হচ্ছে...", 30);
+        showLoader("সার্ভার চেক করা হচ্ছে...", 20);
 
         try {
             const r = await fetch(`https://tikwm.com/api/?url=${encodeURIComponent(currentUrl)}&hd=1`);
@@ -194,20 +154,20 @@
             if(j.data) showFinal(j.data);
             else throw "err";
         } catch(e) {
-            updateLoader("সার্ভার ১ ব্যস্ত, বিকল্প খুঁজছি...", 60);
+            showLoader("বিকল্প সার্ভার ট্রাই করছি...", 50);
             try {
                 const r2 = await fetch(`https://www.tikwm.com/api/?url=${encodeURIComponent(currentUrl)}`);
                 const j2 = await r2.json();
                 if(j2.data) showFinal(j2.data);
-                else { alert("সার্ভার ডাউন!"); reset(); }
-            } catch(err) { alert("Error!"); reset(); }
+                else { alert("সার্ভার ডাউন!"); hideLoader(); }
+            } catch(err) { alert("Error!"); hideLoader(); }
         }
     }
 
     function showFinal(data) {
-        updateLoader("সম্পন্ন!", 100);
+        showLoader("সম্পন্ন!", 100);
         setTimeout(() => {
-            document.getElementById("loadingBox").style.display = "none";
+            hideLoader();
             document.getElementById("main-view").style.display = "none";
             document.getElementById("link-txt").innerText = "লিঙ্ক: " + currentUrl;
             document.getElementById("info-box").style.display = "block";
@@ -216,28 +176,31 @@
             document.getElementById("user-name").innerText = "@" + data.author.nickname;
             document.getElementById("video-title").innerText = data.title || "TikTok Video";
             
+            const vLink = data.play;
+            const mLink = data.music;
+
             const btnBox = document.getElementById("dl-buttons");
             btnBox.innerHTML = `
-                <button class="dl-btn btn-s1" onclick="handleDownload('${data.play}', 'Video_S1.mp4', this)">🚀 ডাউনলোড ১ (Server 1)</button>
-                <button class="dl-btn btn-s2" onclick="handleDownload('${data.play}', 'Video_S2.mp4', this)">📥 ডাউনলোড ২ (Server 2)</button>
-                <a href="${data.play}" target="_blank" class="dl-btn btn-browser">🌐 ব্রাউজার ডাউনলোড</a>
-                <button class="dl-btn btn-mp3" onclick="handleDownload('${data.music}', 'Music.mp3', this)">🎵 অডিও ডাউনলোড (MP3)</button>
+                <button class="dl-btn btn-s1" onclick="initiateDownload('${vLink}', 'Video_S1.mp4')">🚀 ডাউনলোড ১ (Server 1)</button>
+                <button class="dl-btn btn-s2" onclick="initiateDownload('${vLink}', 'Video_S2.mp4')">📥 ডাউনলোড ২ (Server 2)</button>
+                <a href="${vLink}" target="_blank" class="dl-btn btn-browser">🌐 ব্রাউজার ডাউনলোড</a>
+                <button class="dl-btn btn-mp3" onclick="initiateDownload('${mLink}', 'Music.mp3')">🎵 অডিও ডাউনলোড (MP3)</button>
             `;
             document.getElementById("result-area").style.display = "block";
         }, 500);
     }
 
-    // ডাউনলোড হ্যান্ডেলার (একসাথে একাধিক ডাউনলোড সাপোর্ট করবে)
-    async function handleDownload(url, filename, btn) {
-        btn.disabled = true; // একই বাটনে বারবার চাপ দেওয়া বন্ধ
-        updateLoader("ফাইল কানেক্ট করা হচ্ছে...", 10);
-        
+    // ডাউনলোড ফাংশন - যা সাথে সাথে লোডার দেখাবে
+    async function initiateDownload(url, filename) {
+        // বাটনে চাপ দেওয়ার সাথে সাথে এই অংশটি রান করবে
+        document.getElementById("main-view").style.display = "block"; // লোডার দেখানোর জন্য মেনু ভিউ ব্যাক আনা
+        showLoader("লিঙ্ক কানেক্ট হচ্ছে...", 5);
+
         try {
             const response = await fetch(url);
-            if (!response.ok) throw new Error();
-
             const reader = response.body.getReader();
             const contentLength = +response.headers.get('Content-Length');
+            
             let receivedLength = 0;
             let chunks = [];
 
@@ -247,10 +210,9 @@
                 chunks.push(value);
                 receivedLength += value.length;
                 
-                // ডাউনলোড বার আপডেট
                 if (contentLength) {
-                    let step = (receivedLength / contentLength) * 100;
-                    updateLoader("ডাউনলোড হচ্ছে...", step);
+                    let progress = (receivedLength / contentLength) * 100;
+                    showLoader("ডাউনলোড হচ্ছে...", progress);
                 }
             }
 
@@ -259,19 +221,16 @@
             const a = document.createElement('a');
             a.href = dUrl;
             a.download = filename;
+            document.body.appendChild(a);
             a.click();
-            window.URL.revokeObjectURL(dUrl);
+            a.remove();
             
-            updateLoader("ডাউনলোড সফল!", 100);
-            setTimeout(() => { 
-                document.getElementById("loadingBox").style.display = "none";
-                btn.disabled = false;
-            }, 2000);
+            showLoader("সফল!", 100);
+            setTimeout(hideLoader, 1500);
 
         } catch (error) {
-            window.open(url, '_blank'); // কোনো সমস্যা হলে ব্রাউজারে ওপেন হবে
-            btn.disabled = false;
-            document.getElementById("loadingBox").style.display = "none";
+            window.open(url, '_blank');
+            hideLoader();
         }
     }
 </script>
