@@ -42,12 +42,11 @@
 
         .fetch-btn { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--primary), var(--accent)); color: #020617; border: none; border-radius: 18px; font-weight: 900; font-size: 15px; cursor: pointer; transition: 0.3s; }
 
-        /* লিঙ্ক বক্স ও ক্রস বাটন */
         #info-box { 
             display: none; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 18px; 
             margin: 20px 0; border: 1px solid var(--primary); position: relative; text-align: left; 
         }
-        #link-txt { font-size: 12px; color: var(--primary); word-break: break-all; padding-right: 35px; display: block; line-height: 1.4; }
+        #link-txt { font-size: 12px; color: var(--primary); word-break: break-all; padding-right: 35px; display: block; }
         .close-btn { 
             position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.1); 
             border: none; color: white; cursor: pointer; font-size: 16px; width: 26px; height: 26px; 
@@ -67,16 +66,18 @@
         .user-info p { margin: 2px 0 0; font-size: 11px; opacity: 0.5; }
 
         .dl-group { display: flex; flex-direction: column; gap: 10px; }
-        .dl-btn { padding: 13px; border: none; border-radius: 15px; font-weight: 700; font-size: 13px; cursor: pointer; color: white; text-align: center; text-decoration: none; display: block; }
+        .dl-btn { padding: 13px; border: none; border-radius: 15px; font-weight: 700; font-size: 13px; cursor: pointer; color: white; text-align: center; text-decoration: none; display: block; transition: 0.3s; }
         .btn-s1 { background: #2563eb; }
         .btn-browser { background: #0891b2; }
         .btn-mp3 { background: #f43f5e; }
+        .dl-btn:hover { opacity: 0.8; transform: translateY(-2px); }
 
         .footer { margin-top: 35px; }
-        .social-links { margin-top: 15px; display: flex; justify-content: center; gap: 20px; }
-        .social-links a { text-decoration: none; font-weight: 800; font-size: 14px; }
+        .social-links { margin-top: 15px; display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
+        .social-links a { text-decoration: none; font-weight: 800; font-size: 13px; }
         .tg { color: #0088cc; }
         .fb { color: #1877f2; }
+        .app-dl { color: #00ffa3; }
     </style>
 </head>
 <body>
@@ -120,6 +121,7 @@
         <div class="social-links">
             <a href="https://t.me/sammim14" target="_blank" class="tg">Telegram</a>
             <a href="https://fb.com/share/1SD3SzGTyj/" target="_blank" class="fb">Facebook</a>
+            <a href="https://guui68.github.io/Downloading-apps/" target="_blank" class="app-dl">Apps Download</a>
         </div>
     </div>
 </div>
@@ -147,13 +149,22 @@
         currentUrl = document.getElementById("urlInput").value.trim();
         if(!currentUrl.includes("tiktok.com")) return alert("সঠিক TikTok লিঙ্ক দিন!");
 
-        updateLoader("লিঙ্ক চেক করা হচ্ছে...", 40);
+        updateLoader("তথ্য যাচাই করা হচ্ছে...", 40);
 
         try {
+            // প্রথমে HD কোয়ালিটি সার্চ করবে (hd=1)
             const r = await fetch(`https://tikwm.com/api/?url=${encodeURIComponent(currentUrl)}&hd=1`);
             const j = await r.json();
-            if(j.data) showResult(j.data);
-            else alert("সার্ভার ব্যস্ত!");
+            
+            if(j.data) {
+                showResult(j.data);
+            } else {
+                // HD না পাওয়া গেলে সাধারণ কোয়ালিটি ট্রাই করবে
+                const r2 = await fetch(`https://tikwm.com/api/?url=${encodeURIComponent(currentUrl)}`);
+                const j2 = await r2.json();
+                if(j2.data) showResult(j2.data);
+                else alert("সার্ভার ব্যস্ত!");
+            }
         } catch(e) {
             alert("Error!");
             reset();
@@ -173,10 +184,13 @@
             document.getElementById("user-name").innerText = "@" + data.author.nickname;
             document.getElementById("video-title").innerText = data.title || "TikTok Video";
             
+            // স্মার্ট লিঙ্ক সিলেকশন: hd লিঙ্ক থাকলে সেটা নেবে, নাহলে play লিঙ্ক
+            const bestLink = data.hd || data.play;
             const btnBox = document.getElementById("dl-buttons");
+            
             btnBox.innerHTML = `
-                <button class="dl-btn btn-s1" onclick="downloadFile('${data.play}', 'TikTok_Video.mp4')">🚀 ডাউনলোড ১ (Server 1)</button>
-                <a href="${data.play}" target="_blank" class="dl-btn btn-browser">🌐 ব্রাউজার ডাউনলোড</a>
+                <button class="dl-btn btn-s1" onclick="downloadFile('${bestLink}', 'TikTok_No_Watermark.mp4')">🚀 ওয়াটারমার্ক রিমুভ</button>
+                <a href="${bestLink}" target="_blank" class="dl-btn btn-browser">🌐 ব্রাউজার ডাউনলোড</a>
                 <button class="dl-btn btn-mp3" onclick="downloadFile('${data.music}', 'Music.mp3')">🎵 অডিও ডাউনলোড (MP3)</button>
             `;
             document.getElementById("result-area").style.display = "block";
@@ -185,7 +199,7 @@
 
     async function downloadFile(url, name) {
         document.getElementById("loadingBox").style.display = "block";
-        updateLoader("কানেক্ট হচ্ছে...", 10);
+        updateLoader("ফাইল কানেক্ট হচ্ছে...", 10);
         
         try {
             const res = await fetch(url);
@@ -208,7 +222,11 @@
             a.href = dUrl; a.download = name; a.click();
             updateLoader("সফল!", 100);
             setTimeout(() => { document.getElementById("loadingBox").style.display = "none"; }, 1500);
-        } catch (e) { window.open(url, '_blank'); }
+        } catch (e) { 
+            // ফেচ এরর হলে সরাসরি ব্রাউজারে ওপেন করবে (ফাস্টেস্ট ব্যাকআপ)
+            window.open(url, '_blank'); 
+            document.getElementById("loadingBox").style.display = "none";
+        }
     }
 </script>
 </body>
