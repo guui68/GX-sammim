@@ -118,7 +118,7 @@
     <div id="main-view">
         <h1>TikTok Downloader</h1>
         <div class="input-area">
-            <input type="text" id="urlInput" placeholder="লিঙ্কটি এখানে দিন...">
+            <input type="text" id="urlInput" placeholder="TikTok লিঙ্কটি এখানে দিন...">
             <button class="paste-btn" onclick="pasteUrl()">Paste</button>
         </div>
         <button class="fetch-btn" onclick="startFetch()">🚀 ডাউনলোড লিঙ্ক খুঁজুন</button>
@@ -163,8 +163,10 @@
     function reset() { location.reload(); }
 
     async function pasteUrl() {
-        const t = await navigator.clipboard.readText();
-        document.getElementById("urlInput").value = t;
+        try {
+            const t = await navigator.clipboard.readText();
+            document.getElementById("urlInput").value = t;
+        } catch(e) { alert("Clipboard এক্সেস দিন!"); }
     }
 
     function updateLoader(txt, val) {
@@ -176,26 +178,41 @@
 
     async function startFetch() {
         currentUrl = document.getElementById("urlInput").value.trim();
-        if(!currentUrl.includes("tiktok.com")) return alert("সঠিক লিঙ্ক দিন!");
+        
+        // ভ্যালিডেশন: লিঙ্ক অবশ্যই tiktok.com থাকতে হবে
+        if(!currentUrl.includes("tiktok.com")) {
+            alert("ভুল লিঙ্ক! দয়া করে একটি সঠিক TikTok ভিডিও লিঙ্ক দিন।");
+            return;
+        }
 
-        updateLoader("সার্ভার ১ চেক করা হচ্ছে...", 30);
+        updateLoader("তথ্য সংগ্রহ করা হচ্ছে...", 40);
 
         try {
+            // সার্ভার ১ কল
             const r = await fetch(`https://tikwm.com/api/?url=${encodeURIComponent(currentUrl)}&hd=1`);
             const j = await r.json();
+            
             if(j.data) {
                 showFinal(j.data);
-            } else { throw "err"; }
+            } else {
+                throw new Error("Server 1 failed");
+            }
         } catch(e) {
-            updateLoader("সার্ভার ১ ব্যস্ত, সার্ভার ২ ট্রাই করছি...", 60);
+            updateLoader("সার্ভার ১ ব্যস্ত, সার্ভার ২ ট্রাই করছি...", 70);
             try {
-                // সার্ভার ২ এর জন্য উন্নত এপিআই মেথড
+                // অটো ফলব্যাক সার্ভার ২
                 const r2 = await fetch(`https://www.tikwm.com/api/?url=${encodeURIComponent(currentUrl)}`);
                 const j2 = await r2.json();
                 if(j2.data) {
                     showFinal(j2.data);
-                } else { alert("দুঃখিত, কোনো সার্ভার কাজ করছে না!"); reset(); }
-            } catch(err) { alert("Error!"); reset(); }
+                } else {
+                    alert("দুঃখিত, কোনো সার্ভারই কাজ করছে না!");
+                    reset();
+                }
+            } catch(err) {
+                alert("এরর! নেটওয়ার্ক চেক করুন।");
+                reset();
+            }
         }
     }
 
@@ -212,22 +229,23 @@
             document.getElementById("user-name").innerText = "@" + data.author.nickname;
             document.getElementById("video-title").innerText = data.title || "TikTok Video";
             
-            const videoLink = data.play;
-            const musicLink = data.music;
+            const videoUrl = data.play;
+            const musicUrl = data.music;
 
             const btnBox = document.getElementById("dl-buttons");
+            // এখন সার্ভার ২ ও ডাউনলোড কাজ করবে কারণ এটি সরাসরি ডাটা থেকে লিঙ্ক পাচ্ছে
             btnBox.innerHTML = `
-                <button class="dl-btn btn-s1" onclick="downloadFile('${videoLink}', 'Video_S1.mp4')">🚀 ডাউনলোড ১ (Server 1)</button>
-                <button class="dl-btn btn-s2" onclick="downloadFile('${videoLink}', 'Video_S2.mp4')">📥 ডাউনলোড ২ (Server 2)</button>
-                <a href="${videoLink}" target="_blank" class="dl-btn btn-browser">🌐 ব্রাউজার ডাউনলোড</a>
-                <button class="dl-btn btn-mp3" onclick="downloadFile('${musicLink}', 'Music.mp3')">🎵 অডিও ডাউনলোড (MP3)</button>
+                <button class="dl-btn btn-s1" onclick="downloadFile('${videoUrl}', 'Video_S1.mp4')">🚀 ডাউনলোড ১ (Server 1)</button>
+                <button class="dl-btn btn-s2" onclick="downloadFile('${videoUrl}', 'Video_S2.mp4')">📥 ডাউনলোড ২ (Server 2)</button>
+                <a href="${videoUrl}" target="_blank" class="dl-btn btn-browser">🌐 ব্রাউজার ডাউনলোড</a>
+                <button class="dl-btn btn-mp3" onclick="downloadFile('${musicUrl}', 'Music.mp3')">🎵 অডিও ডাউনলোড (MP3)</button>
             `;
             document.getElementById("result-area").style.display = "block";
         }, 500);
     }
 
     async function downloadFile(url, name) {
-        updateLoader("ফাইল প্রস্তুত হচ্ছে...", 50);
+        updateLoader("ডাউনলোড শুরু হচ্ছে...", 50);
         document.getElementById("loadingBox").style.display = "block";
         
         try {
@@ -235,16 +253,15 @@
             const blob = await response.blob();
             const downloadUrl = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.style.display = 'none';
             a.href = downloadUrl;
             a.download = name;
             document.body.appendChild(a);
             a.click();
+            document.body.removeChild(a);
             window.URL.revokeObjectURL(downloadUrl);
-            updateLoader("ডাউনলোড সফল!", 100);
+            updateLoader("সফল!", 100);
             setTimeout(() => { document.getElementById("loadingBox").style.display = "none"; }, 1500);
         } catch (error) {
-            // যদি ফেচ কাজ না করে তবে ব্রাউজারে ওপেন হবে
             window.open(url, '_blank');
             document.getElementById("loadingBox").style.display = "none";
         }
