@@ -168,6 +168,7 @@
         document.getElementById("urlInput").value = "";
         checkInput();
         document.getElementById("result-area").style.display = "none";
+        document.getElementById("loading-container").style.display = "none";
     }
 
     async function pasteUrl() {
@@ -210,16 +211,15 @@
         document.getElementById("user-name").innerText = "@" + data.author.nickname;
         document.getElementById("video-title").innerText = data.title || "TikTok Video";
         
-        // ইউনিক নাম তৈরির জন্য টাইমস্ট্যাম্প যুক্ত করা হয়েছে
-        const timestamp = Math.floor(Date.now() / 1000);
-        
-        setupDownload(document.getElementById("dlVid"), data.play, `GX_Video_${timestamp}.mp4`);
-        setupDownload(document.getElementById("dlAud"), data.music, `GX_Audio_${timestamp}.mp3`);
+        // সতেজ লিংকের জন্য ডেটা পাস করা
+        setupDownload(document.getElementById("dlVid"), data.play, "video");
+        setupDownload(document.getElementById("dlAud"), data.music, "audio");
 
         document.getElementById("result-area").style.display = "block";
     }
 
-    function setupDownload(btn, fileUrl, fileName) {
+    function setupDownload(btn, fileUrl, type) {
+        // পুরনো ইভেন্ট রিমুভ করে নতুন করে সেট করা (রিসেট প্রযুক্তি)
         btn.onclick = async function() {
             const container = document.getElementById("loading-container");
             const fill = document.getElementById("pBar");
@@ -229,39 +229,49 @@
             container.style.display = "block";
             fill.style.width = "0%";
             pPercent.innerText = "0%";
-            statusText.innerText = "Downloading...";
+            statusText.innerText = "Connecting...";
+
+            const timestamp = Math.floor(Date.now() / 1000);
+            const fileName = type === "video" ? `GX_Video_${timestamp}.mp4` : `GX_Audio_${timestamp}.mp3`;
             
             let progress = 0;
             let timer = setInterval(() => {
-                if (progress < 90) {
-                    progress += 3;
+                if (progress < 95) {
+                    progress += 5;
                     fill.style.width = progress + "%";
                     pPercent.innerText = progress + "%";
                 }
-            }, 100);
+            }, 150);
 
             try {
+                // Fetch এর মাধ্যমে ফাইল রিফ্রেশ করে নামানো
                 const response = await fetch(fileUrl);
+                if (!response.ok) throw new Error();
                 const blob = await response.blob();
                 
                 clearInterval(timer);
                 fill.style.width = "100%";
                 pPercent.innerText = "100%";
-                statusText.innerText = "Saving to device...";
+                statusText.innerText = "Success! Saving...";
 
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
-                a.href = url; a.download = fileName;
+                a.style.display = 'none';
+                a.href = url;
+                a.download = fileName;
                 document.body.appendChild(a);
                 a.click();
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(url);
                 
+                // ক্লিনআপ (যাতে আবার ডাউনলোড করা যায়)
                 setTimeout(() => {
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
                     container.style.display = "none";
                 }, 2000);
 
             } catch (e) {
+                // কোনো কারণে ফেইল করলে সরাসরি ওপেন করার চেষ্টা করবে
+                clearInterval(timer);
                 window.open(fileUrl, '_blank');
                 container.style.display = "none";
             }
