@@ -30,7 +30,7 @@
             backdrop-filter: blur(20px);
             padding: 35px 25px; border-radius: 35px;
             border: 1px solid var(--border);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 30px rgba(37, 99, 235, 0.2);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             text-align: center;
         }
 
@@ -40,7 +40,7 @@
         input { flex: 1; border: none; background: transparent; padding: 12px; color: white; font-size: 14px; outline: none; }
         .paste-btn { background: #4f46e5; color: white; border: none; padding: 8px 14px; border-radius: 12px; font-weight: 700; font-size: 11px; cursor: pointer; }
 
-        .fetch-btn { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--primary), var(--accent)); color: #020617; border: none; border-radius: 18px; font-weight: 900; font-size: 15px; cursor: pointer; transition: 0.3s; }
+        .fetch-btn { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--primary), var(--accent)); color: #020617; border: none; border-radius: 18px; font-weight: 900; font-size: 15px; cursor: pointer; transition: 0.2s; }
 
         #info-box { 
             display: none; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 18px; 
@@ -56,7 +56,7 @@
         .loader-container { display: none; margin-top: 20px; text-align: left; }
         .loader-info { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; color: var(--primary); }
         .bar-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
-        .bar-fill { width: 0%; height: 100%; background: var(--primary); transition: 0.2s; }
+        .bar-fill { width: 0%; height: 100%; background: var(--primary); transition: 0.1s; }
 
         #result-area { display: none; margin-top: 10px; }
         .video-card { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 20px; border: 1px solid var(--border); display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
@@ -66,11 +66,10 @@
         .user-info p { margin: 2px 0 0; font-size: 11px; opacity: 0.5; }
 
         .dl-group { display: flex; flex-direction: column; gap: 10px; }
-        .dl-btn { padding: 13px; border: none; border-radius: 15px; font-weight: 700; font-size: 13px; cursor: pointer; color: white; text-align: center; text-decoration: none; display: block; transition: 0.3s; }
+        .dl-btn { padding: 13px; border: none; border-radius: 15px; font-weight: 700; font-size: 13px; cursor: pointer; color: white; text-align: center; text-decoration: none; display: block; transition: 0.2s; }
         .btn-s1 { background: #2563eb; }
         .btn-browser { background: #0891b2; }
         .btn-mp3 { background: #f43f5e; }
-        .dl-btn:hover { opacity: 0.8; transform: translateY(-2px); }
 
         .footer { margin-top: 35px; }
         .social-links { margin-top: 15px; display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
@@ -86,7 +85,7 @@
     <div id="input-section">
         <h1>TikTok Downloader</h1>
         <div class="input-area">
-            <input type="text" id="urlInput" placeholder="TikTok লিঙ্কটি এখানে দিন...">
+            <input type="text" id="urlInput" placeholder="TikTok লিঙ্ক দিন...">
             <button class="paste-btn" onclick="pasteUrl()">Paste</button>
         </div>
         <button class="fetch-btn" onclick="startFetch()">🚀 ডাউনলোড লিঙ্ক খুঁজুন</button>
@@ -135,7 +134,7 @@
         try {
             const t = await navigator.clipboard.readText();
             document.getElementById("urlInput").value = t;
-        } catch(e) { alert("Clipboard এক্সেস দিন!"); }
+        } catch(e) { alert("Paste failed!"); }
     }
 
     function updateLoader(txt, val) {
@@ -149,25 +148,26 @@
         currentUrl = document.getElementById("urlInput").value.trim();
         if(!currentUrl.includes("tiktok.com")) return alert("সঠিক TikTok লিঙ্ক দিন!");
 
-        updateLoader("তথ্য যাচাই করা হচ্ছে...", 40);
+        updateLoader("খুঁজছি...", 50);
 
         try {
-            // প্রথমে HD কোয়ালিটি সার্চ করবে (hd=1)
+            // আরও ফাস্ট ডাটা ফেচ করার জন্য hd=1 দিয়ে শুরু
             const r = await fetch(`https://tikwm.com/api/?url=${encodeURIComponent(currentUrl)}&hd=1`);
             const j = await r.json();
             
             if(j.data) {
                 showResult(j.data);
             } else {
-                // HD না পাওয়া গেলে সাধারণ কোয়ালিটি ট্রাই করবে
-                const r2 = await fetch(`https://tikwm.com/api/?url=${encodeURIComponent(currentUrl)}`);
+                throw "error";
+            }
+        } catch(e) {
+            // ব্যাকআপ ফাস্ট কল
+            try {
+                const r2 = await fetch(`https://www.tikwm.com/api/?url=${encodeURIComponent(currentUrl)}`);
                 const j2 = await r2.json();
                 if(j2.data) showResult(j2.data);
                 else alert("সার্ভার ব্যস্ত!");
-            }
-        } catch(e) {
-            alert("Error!");
-            reset();
+            } catch(err) { alert("Error!"); reset(); }
         }
     }
 
@@ -176,7 +176,6 @@
         setTimeout(() => {
             document.getElementById("loadingBox").style.display = "none";
             document.getElementById("input-section").style.display = "none";
-            
             document.getElementById("link-txt").innerText = "লিঙ্ক: " + currentUrl;
             document.getElementById("info-box").style.display = "block";
             
@@ -184,22 +183,22 @@
             document.getElementById("user-name").innerText = "@" + data.author.nickname;
             document.getElementById("video-title").innerText = data.title || "TikTok Video";
             
-            // স্মার্ট লিঙ্ক সিলেকশন: hd লিঙ্ক থাকলে সেটা নেবে, নাহলে play লিঙ্ক
-            const bestLink = data.hd || data.play;
+            const vLink = data.hd || data.play;
             const btnBox = document.getElementById("dl-buttons");
             
+            // ফাইলের নাম এখানে সেট করা হয়েছে
             btnBox.innerHTML = `
-                <button class="dl-btn btn-s1" onclick="downloadFile('${bestLink}', 'TikTok_No_Watermark.mp4')">🚀 ওয়াটারমার্ক রিমুভ</button>
-                <a href="${bestLink}" target="_blank" class="dl-btn btn-browser">🌐 ব্রাউজার ডাউনলোড</a>
-                <button class="dl-btn btn-mp3" onclick="downloadFile('${data.music}', 'Music.mp3')">🎵 অডিও ডাউনলোড (MP3)</button>
+                <button class="dl-btn btn-s1" onclick="downloadFile('${vLink}', 'GX Sammim download.mp4')">🚀 ওয়াটারমার্ক রিমুভ</button>
+                <a href="${vLink}" target="_blank" class="dl-btn btn-browser">🌐 ব্রাউজার ডাউনলোড</a>
+                <button class="dl-btn btn-mp3" onclick="downloadFile('${data.music}', 'GX Sammim download.mp3')">🎵 অডিও ডাউনলোড (MP3)</button>
             `;
             document.getElementById("result-area").style.display = "block";
-        }, 500);
+        }, 100);
     }
 
     async function downloadFile(url, name) {
         document.getElementById("loadingBox").style.display = "block";
-        updateLoader("ফাইল কানেক্ট হচ্ছে...", 10);
+        updateLoader("শুরু হচ্ছে...", 10);
         
         try {
             const res = await fetch(url);
@@ -213,7 +212,7 @@
                 if (done) break;
                 chunks.push(value);
                 received += value.length;
-                if (length) updateLoader("ডাউনলোড হচ্ছে...", (received / length) * 100);
+                if (length) updateLoader("ডাউনলোড...", (received / length) * 100);
             }
 
             const blob = new Blob(chunks);
@@ -221,9 +220,8 @@
             const a = document.createElement('a');
             a.href = dUrl; a.download = name; a.click();
             updateLoader("সফল!", 100);
-            setTimeout(() => { document.getElementById("loadingBox").style.display = "none"; }, 1500);
+            setTimeout(() => { document.getElementById("loadingBox").style.display = "none"; }, 1000);
         } catch (e) { 
-            // ফেচ এরর হলে সরাসরি ব্রাউজারে ওপেন করবে (ফাস্টেস্ট ব্যাকআপ)
             window.open(url, '_blank'); 
             document.getElementById("loadingBox").style.display = "none";
         }
