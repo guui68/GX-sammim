@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XG Sammim - High Speed Downloader</title>
+    <title>XG Sammim - Smart Downloader</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -46,16 +46,10 @@
             padding: 10px; color: #111; font-size: 14px; outline: none; font-weight: 600;
         }
 
-        .clear-btn {
-            background: #eee; color: #666; border: none;
-            width: 24px; height: 24px; border-radius: 50%;
-            cursor: pointer; display: none; align-items: center; justify-content: center;
-        }
-
         .paste-btn {
             background: #4f46e5; color: white; border: none;
             padding: 7px 12px; border-radius: 10px;
-            font-weight: 700; font-size: 11px; cursor: pointer; margin-left: 5px;
+            font-weight: 700; font-size: 11px; cursor: pointer;
         }
 
         .fetch-btn {
@@ -65,17 +59,24 @@
             font-weight: 800; font-size: 15px; cursor: pointer;
         }
 
-        /* লোডিং বক্স ডিজাইন */
-        .progress-box {
-            display: none; margin-top: 20px; text-align: left;
-            background: rgba(0,0,0,0.2); padding: 15px; border-radius: 15px; border: 1px solid var(--border);
+        #link-container {
+            display: none; background: rgba(0,0,0,0.4); padding: 12px; 
+            border-radius: 15px; margin-bottom: 15px; border: 1px solid var(--primary);
+            position: relative; text-align: left;
         }
-        #current-link { font-size: 10px; color: var(--primary); opacity: 0.7; word-break: break-all; margin-bottom: 10px; display: block; }
-        .progress-info { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; color: #fff; }
-        .p-bar-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
-        .p-bar-fill { width: 0%; height: 100%; background: linear-gradient(to right, var(--primary), var(--accent)); transition: width 0.4s; }
+        #link-text { font-size: 11px; color: var(--primary); word-break: break-all; padding-right: 35px; display: block; }
+        .close-link-btn {
+            position: absolute; top: 50%; right: 10px; transform: translateY(-50%);
+            background: rgba(255,255,255,0.15); border: none; color: white;
+            width: 25px; height: 25px; border-radius: 50%; cursor: pointer;
+        }
 
-        #result-area { display: none; margin-top: 20px; }
+        .progress-box { display: none; margin-bottom: 20px; text-align: left; }
+        .progress-info { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; color: var(--primary); }
+        .p-bar-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .p-bar-fill { width: 0%; height: 100%; background: var(--primary); transition: width 0.3s; }
+
+        #result-area { display: none; margin-top: 10px; }
         .video-card {
             background: rgba(255,255,255,0.05); padding: 12px;
             border-radius: 20px; border: 1px solid var(--border);
@@ -89,25 +90,24 @@
         .dl-group { display: flex; flex-direction: column; gap: 8px; }
         .dl-btn {
             padding: 12px; border: none; border-radius: 12px;
-            font-weight: 700; font-size: 13px; cursor: pointer;
-            color: white; transition: 0.3s;
+            font-weight: 700; font-size: 13px; cursor: pointer; color: white;
         }
         .btn-s1 { background: #2563eb; } 
         .btn-s2 { background: #7c3aed; } 
-        .btn-browser { background: #0891b2; } 
         .btn-audio { background: #f43f5e; }
-        .dl-btn:active { transform: scale(0.95); }
 
-        /* সোশ্যাল বাটন গোল ডিজাইন */
-        .footer { margin-top: 30px; font-size: 13px; }
-        .social-links { margin-top: 15px; display: flex; justify-content: center; gap: 12px; }
+        .footer { margin-top: 30px; }
+        .footer b { color: #fff; opacity: 0.8; }
+        .social-links { margin-top: 15px; display: flex; justify-content: center; gap: 20px; }
+        
+        /* সোশ্যাল বাটন: শুধু টেক্সট কালার */
         .social-links a { 
-            color: white; text-decoration: none; font-weight: 600; font-size: 12px;
-            padding: 8px 18px; border-radius: 25px; /* গোল বাটন */
-            transition: 0.3s; border: 1px solid rgba(255,255,255,0.2);
+            text-decoration: none; font-weight: 800; font-size: 14px;
+            background: none; border: none; transition: 0.3s;
         }
-        .tg-link { background: #0088cc; }
-        .fb-link { background: #1877f2; }
+        .tg-link { color: #0088cc; }
+        .fb-link { color: #1877f2; }
+        .social-links a:hover { opacity: 0.7; transform: scale(1.1); }
     </style>
 </head>
 <body>
@@ -116,21 +116,23 @@
     <div id="input-section">
         <h1>TikTok Downloader</h1>
         <div class="input-group">
-            <input type="text" id="urlInput" placeholder="লিঙ্কটি এখানে দিন..." oninput="toggleX()">
-            <button class="clear-btn" id="clearBtn" onclick="resetAll()">✕</button>
+            <input type="text" id="urlInput" placeholder="লিঙ্কটি এখানে দিন...">
             <button class="paste-btn" onclick="pasteUrl()">Paste</button>
         </div>
-        
-        <div class="progress-box" id="main-progress">
-            <span id="current-link"></span>
-            <div class="progress-info">
-                <span id="statusText">প্রসেসিং...</span>
-                <span id="pPercent">0%</span>
-            </div>
-            <div class="p-bar-bg"><div class="p-bar-fill" id="pBar"></div></div>
-        </div>
-
         <button class="fetch-btn" id="fetchBtn" onclick="handleFetch()">🚀 ডাউনলোড লিঙ্ক খুঁজুন</button>
+    </div>
+
+    <div id="link-container">
+        <span id="link-text"></span>
+        <button class="close-link-btn" onclick="resetAll()">✕</button>
+    </div>
+
+    <div class="progress-box" id="main-progress">
+        <div class="progress-info">
+            <span id="statusText">প্রসেসিং...</span>
+            <span id="pPercent">0%</span>
+        </div>
+        <div class="p-bar-bg"><div class="p-bar-fill" id="pBar"></div></div>
     </div>
 
     <div id="result-area">
@@ -156,20 +158,11 @@
 <script>
     let currentUrl = "";
 
-    function toggleX() {
-        document.getElementById("clearBtn").style.display = document.getElementById("urlInput").value.length > 0 ? "flex" : "none";
-    }
-
-    function resetAll() {
-        location.reload(); // সব রিসেট করার জন্য রিলোড সেরা অপশন
-    }
+    function resetAll() { location.reload(); }
 
     async function pasteUrl() {
-        try {
-            const text = await navigator.clipboard.readText();
-            document.getElementById("urlInput").value = text;
-            toggleX();
-        } catch (e) {}
+        const text = await navigator.clipboard.readText();
+        document.getElementById("urlInput").value = text;
     }
 
     function updateBar(txt, val) {
@@ -182,33 +175,56 @@
         currentUrl = document.getElementById("urlInput").value.trim();
         if (!currentUrl.includes("tiktok.com")) return alert("সঠিক লিঙ্ক দিন!");
 
-        const pb = document.getElementById("main-progress");
-        document.getElementById("current-link").innerText = "লিঙ্ক: " + currentUrl;
-        pb.style.display = "block";
+        document.getElementById("link-text").innerText = "লিঙ্ক: " + currentUrl;
+        document.getElementById("link-container").style.display = "block";
+        document.getElementById("main-progress").style.display = "block";
         
-        updateBar("সার্ভার ১ এর সাথে কানেক্ট হচ্ছে...", 20);
-        setTimeout(() => updateBar("তথ্য সংগ্রহ করা হচ্ছে...", 50), 500);
+        // --- সার্ভার ১ চেষ্টা করা হচ্ছে ---
+        updateBar("সার্ভার ১ থেকে তথ্য আনা হচ্ছে...", 30);
 
         try {
-            // সার্ভার ১ (TikWM)
             const res = await fetch(`https://tikwm.com/api/?url=${encodeURIComponent(currentUrl)}&hd=1`);
             const json = await res.json();
 
             if (json.data) {
-                updateBar("সব তথ্য পাওয়া গেছে!", 100);
-                setTimeout(() => {
-                    pb.style.display = "none";
-                    document.getElementById("input-section").style.display = "none";
-                    renderResult(json.data);
-                }, 600);
+                success(json.data);
             } else {
-                alert("সার্ভার ১ ব্যর্থ! সার্ভার ২ ট্রাই করুন।");
-                pb.style.display = "none";
+                throw new Error("Server 1 Failed");
             }
         } catch (e) {
-            alert("নেটওয়ার্ক সমস্যা!");
-            pb.style.display = "none";
+            // --- সার্ভার ১ ফেইল করলে অটোমেটিক সার্ভার ২-এ যাবে ---
+            updateBar("সার্ভার ১ ব্যস্ত! সার্ভার ২ চেক করছি...", 60);
+            try {
+                const res2 = await fetch(`https://api.tiklydown.eu.org/api/download?url=${encodeURIComponent(currentUrl)}`);
+                const json2 = await res2.json();
+                
+                if(json2.result) {
+                    // সার্ভার ২ এর ডাটা ফরম্যাট অনুযায়ী কনভার্ট
+                    const data = {
+                        author: { avatar: json2.result.author.avatar, nickname: json2.result.author.nickname },
+                        title: json2.result.title,
+                        play: json2.result.video.noWatermark,
+                        music: json2.result.music.play_url
+                    };
+                    success(data);
+                } else {
+                    alert("দুঃখিত, কোনো সার্ভারই কাজ করছে না!");
+                    resetAll();
+                }
+            } catch (err) {
+                alert("নেটওয়ার্ক এরর!");
+                resetAll();
+            }
         }
+    }
+
+    function success(data) {
+        updateBar("সম্পন্ন!", 100);
+        setTimeout(() => {
+            document.getElementById("input-section").style.display = "none";
+            document.getElementById("main-progress").style.display = "none";
+            renderResult(data);
+        }, 500);
     }
 
     function renderResult(data) {
@@ -219,11 +235,8 @@
         const group = document.getElementById("dl-buttons");
         group.innerHTML = ""; 
 
-        const s1_link = data.hdplay || data.play;
-
-        addBtn(group, "🚀 ডাউনলোড ১ (Server 1 - HD)", "btn-s1", () => downloadFile(s1_link, "GX_Server1.mp4"));
-        addBtn(group, "📥 ডাউনলোড ২ (Server 2 - Stable)", "btn-s2", () => downloadAlternative(currentUrl));
-        addBtn(group, "🌐 ব্রাউজার ডাউনলোড", "btn-browser", () => window.open(s1_link, '_blank'));
+        addBtn(group, "🚀 ডাউনলোড ১ (Server 1)", "btn-s1", () => downloadFile(data.play, "GX_S1.mp4"));
+        addBtn(group, "📥 ডাউনলোড ২ (Server 2)", "btn-s2", () => downloadFile(data.play, "GX_S2.mp4"));
         addBtn(group, "🎵 অডিও ডাউনলোড (MP3)", "btn-audio", () => downloadFile(data.music, "Audio.mp3"));
 
         document.getElementById("result-area").style.display = "block";
@@ -236,43 +249,17 @@
     }
 
     async function downloadFile(url, name) {
-        const pb = document.getElementById("main-progress");
-        pb.style.display = "block";
-        updateBar("ডাউনলোড প্রসেস হচ্ছে...", 40);
-        
+        document.getElementById("main-progress").style.display = "block";
+        updateBar("ফাইল প্রস্তুত হচ্ছে...", 50);
         try {
             const res = await fetch(url);
-            updateBar("ফাইল ডাউনলোড হচ্ছে...", 80);
             const blob = await res.blob();
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
             a.download = name; a.click();
             updateBar("সফল!", 100);
-            setTimeout(() => pb.style.display = "none", 1500);
-        } catch (e) { window.open(url, '_blank'); pb.style.display = "none"; }
-    }
-
-    async function downloadAlternative(url) {
-        const pb = document.getElementById("main-progress");
-        pb.style.display = "block";
-        updateBar("সার্ভার ২ থেকে ফাইল খোঁজা হচ্ছে...", 50);
-        
-        try {
-            // নতুন শক্তিশালী এপিআই: Snaptik Alternative
-            const res = await fetch(`https://api.tiklydown.eu.org/api/download?url=${encodeURIComponent(url)}`);
-            const json = await res.json();
-            
-            if(json.result && json.result.video) {
-                const dl = json.result.video.noWatermark || json.result.video.watermark;
-                downloadFile(dl, "GX_Server2.mp4");
-            } else {
-                alert("সার্ভার ২ বর্তমানে ব্যস্ত!");
-                pb.style.display = "none";
-            }
-        } catch (e) {
-            alert("সার্ভার ২ কানেকশন এরর!");
-            pb.style.display = "none";
-        }
+            setTimeout(() => { document.getElementById("main-progress").style.display = "none"; }, 1500);
+        } catch (e) { window.open(url, '_blank'); }
     }
 </script>
 </body>
