@@ -168,7 +168,6 @@
         document.getElementById("urlInput").value = "";
         checkInput();
         document.getElementById("result-area").style.display = "none";
-        document.getElementById("loading-container").style.display = "none";
     }
 
     async function pasteUrl() {
@@ -190,7 +189,8 @@
         fetchBtn.innerText = "Searching...";
 
         try {
-            const res = await fetch(`https://tikwm.com/api/?url=${encodeURIComponent(url)}`);
+            // API রিকোয়েস্টেও ক্যাশ ক্লিনিং যোগ করা হয়েছে
+            const res = await fetch(`https://tikwm.com/api/?url=${encodeURIComponent(url)}&t=${Date.now()}`);
             const json = await res.json();
             
             if (json.data) {
@@ -211,15 +211,23 @@
         document.getElementById("user-name").innerText = "@" + data.author.nickname;
         document.getElementById("video-title").innerText = data.title || "TikTok Video";
         
-        // সতেজ লিংকের জন্য ডেটা পাস করা
-        setupDownload(document.getElementById("dlVid"), data.play, "video");
-        setupDownload(document.getElementById("dlAud"), data.music, "audio");
+        // বাটনগুলোকে একদম ফ্রেশ করে তৈরি করা
+        const vidBtn = document.getElementById("dlVid");
+        const audBtn = document.getElementById("dlAud");
+
+        // পুরনো ফাংশন থাকলে তা রিমুভ করার জন্য ক্লোনিং করা হয়েছে
+        const newVidBtn = vidBtn.cloneNode(true);
+        const newAudBtn = audBtn.cloneNode(true);
+        vidBtn.parentNode.replaceChild(newVidBtn, vidBtn);
+        audBtn.parentNode.replaceChild(newAudBtn, audBtn);
+
+        setupDownload(newVidBtn, data.play, "video");
+        setupDownload(newAudBtn, data.music, "audio");
 
         document.getElementById("result-area").style.display = "block";
     }
 
     function setupDownload(btn, fileUrl, type) {
-        // পুরনো ইভেন্ট রিমুভ করে নতুন করে সেট করা (রিসেট প্রযুক্তি)
         btn.onclick = async function() {
             const container = document.getElementById("loading-container");
             const fill = document.getElementById("pBar");
@@ -229,24 +237,26 @@
             container.style.display = "block";
             fill.style.width = "0%";
             pPercent.innerText = "0%";
-            statusText.innerText = "Connecting...";
+            statusText.innerText = "Downloading...";
 
-            const timestamp = Math.floor(Date.now() / 1000);
-            const fileName = type === "video" ? `GX_Video_${timestamp}.mp4` : `GX_Audio_${timestamp}.mp3`;
+            const ts = Date.now();
+            const fileName = type === "video" ? `GX_Video_${ts}.mp4` : `GX_Audio_${ts}.mp3`;
             
+            // চূড়ান্ত সমাধান: URL-এর সাথে ইউনিক প্যারামিটার যোগ করা যাতে ক্যাশ না ধরে
+            const freshUrl = fileUrl + (fileUrl.includes('?') ? '&' : '?') + 'nocache=' + ts;
+
             let progress = 0;
             let timer = setInterval(() => {
-                if (progress < 95) {
+                if (progress < 90) {
                     progress += 5;
                     fill.style.width = progress + "%";
                     pPercent.innerText = progress + "%";
                 }
-            }, 150);
+            }, 100);
 
             try {
-                // Fetch এর মাধ্যমে ফাইল রিফ্রেশ করে নামানো
-                const response = await fetch(fileUrl);
-                if (!response.ok) throw new Error();
+                // cache: 'no-store' ব্যবহার করে ব্রাউজার ক্যাশ বাইপাস করা
+                const response = await fetch(freshUrl, { cache: 'no-store' });
                 const blob = await response.blob();
                 
                 clearInterval(timer);
@@ -256,13 +266,12 @@
 
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
-                a.style.display = 'none';
                 a.href = url;
                 a.download = fileName;
                 document.body.appendChild(a);
                 a.click();
                 
-                // ক্লিনআপ (যাতে আবার ডাউনলোড করা যায়)
+                // ক্লিনআপ: ২ সেকেন্ড পর সব পরিষ্কার করে বাটনকে আবার প্রস্তুত করবে
                 setTimeout(() => {
                     document.body.removeChild(a);
                     window.URL.revokeObjectURL(url);
@@ -270,9 +279,8 @@
                 }, 2000);
 
             } catch (e) {
-                // কোনো কারণে ফেইল করলে সরাসরি ওপেন করার চেষ্টা করবে
                 clearInterval(timer);
-                window.open(fileUrl, '_blank');
+                window.open(freshUrl, '_blank');
                 container.style.display = "none";
             }
         };
