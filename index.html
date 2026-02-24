@@ -3,121 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XG Sammim - Fast Downloader</title>
+    <title>XG Sammim - Pro TikTok Downloader</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #00f2fe;
             --accent: #00ffa3;
+            --bg-dark: #0b0e14;
             --glass: rgba(255, 255, 255, 0.08);
         }
 
         body {
             margin: 0; padding: 20px;
             font-family: 'Outfit', sans-serif;
-            background: #0b0e14;
+            background: var(--bg-dark);
+            background-image: radial-gradient(circle at top right, rgba(0, 242, 254, 0.15), transparent 40%),
+                              radial-gradient(circle at bottom left, rgba(79, 70, 229, 0.1), transparent 40%);
             color: white; display: flex; flex-direction: column; 
             align-items: center; justify-content: center; min-height: 100vh;
         }
 
         .container {
-            width: 100%; max-width: 400px;
+            width: 100%; max-width: 420px;
             background: var(--glass);
-            backdrop-filter: blur(20px);
-            padding: 30px; border-radius: 35px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(25px);
+            padding: 30px; border-radius: 40px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,255,255,0.12);
             text-align: center;
         }
 
+        h1 { font-size: 28px; font-weight: 800; margin-bottom: 25px; 
+             background: linear-gradient(135deg, #fff, var(--primary));
+             -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
         .input-group {
-            display: flex; background: white;
+            display: flex; background: #fff;
             border-radius: 20px; padding: 6px; margin-bottom: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
 
         input {
-            flex: 1; border: none; padding: 12px;
+            flex: 1; border: none; padding: 14px;
             font-size: 15px; outline: none; color: #111;
             background: transparent; font-weight: 600;
         }
 
         .paste-btn {
             background: #4f46e5; color: white; border: none;
-            padding: 10px 18px; border-radius: 15px;
-            font-weight: 700; cursor: pointer;
+            padding: 10px 20px; border-radius: 16px;
+            font-weight: 700; cursor: pointer; transition: 0.3s;
         }
 
         .fetch-btn {
             width: 100%; padding: 18px; 
             background: linear-gradient(45deg, #00c853, #00ffa3);
-            color: #052e16; border: none; border-radius: 20px;
+            color: #052e16; border: none; border-radius: 22px;
             font-weight: 800; font-size: 17px; cursor: pointer;
-            transition: 0.3s;
+            box-shadow: 0 10px 20px rgba(0, 255, 163, 0.2);
+            transition: 0.4s;
         }
+        .fetch-btn:hover { transform: scale(1.02); filter: brightness(1.1); }
 
-        /* লোডিং এনিমেশন */
-        #loading-shimmer {
-            display: none; margin-top: 25px;
-        }
-        .shimmer-card {
-            height: 80px; background: rgba(255,255,255,0.05);
-            border-radius: 20px; position: relative; overflow: hidden;
-        }
-        .shimmer-card::after {
-            content: ""; position: absolute; top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            animation: loading 1.5s infinite;
-        }
-        @keyframes loading { 100% { left: 100%; } }
-
-        #result-area { display: none; margin-top: 25px; animation: fadeIn 0.4s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        #result-area { display: none; margin-top: 30px; animation: slideUp 0.6s ease; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
         .video-card {
-            background: rgba(255,255,255,0.06); padding: 15px;
-            border-radius: 25px; margin-bottom: 20px; text-align: left;
+            background: rgba(255,255,255,0.06); padding: 18px;
+            border-radius: 28px; margin-bottom: 20px; text-align: left;
+            border: 1px solid rgba(255,255,255,0.1);
             display: flex; align-items: center; gap: 15px;
         }
 
-        #user-img { width: 55px; height: 55px; border-radius: 50%; border: 2px solid var(--primary); }
-        .user-info h4 { margin: 0; color: var(--primary); }
-        .user-info p { margin: 4px 0 0; font-size: 12px; opacity: 0.8; }
+        #user-img { width: 55px; height: 55px; border-radius: 50%; border: 2px solid var(--primary); padding: 2px; }
+        .user-info h4 { margin: 0; font-size: 16px; color: var(--primary); }
+        .user-info p { margin: 4px 0 0; font-size: 12px; opacity: 0.8; line-height: 1.4; }
 
-        .dl-group { display: flex; flex-direction: column; gap: 12px; }
+        .dl-group { display: flex; flex-direction: column; gap: 14px; }
+        
         .dl-btn {
-            padding: 16px; border: none; border-radius: 18px;
+            padding: 16px; border: none; border-radius: 20px;
             font-weight: 800; font-size: 15px; cursor: pointer;
-            color: white; transition: 0.3s;
+            color: white; display: flex; align-items: center; justify-content: center; gap: 12px;
+            transition: 0.3s;
         }
-        .btn-1 { background: linear-gradient(135deg, #0072ff, #00c6ff); }
-        .btn-2 { background: linear-gradient(135deg, #8e2de2, #4a00e0); }
-        .btn-3 { background: #333; }
+        
+        .btn-1 { background: linear-gradient(135deg, #2563eb, #3b82f6); box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3); } 
+        .btn-2 { background: linear-gradient(135deg, #7c3aed, #a855f7); box-shadow: 0 6px 15px rgba(124, 58, 237, 0.3); } 
+        .btn-3 { background: linear-gradient(135deg, #0891b2, #06b6d4); } 
+        .btn-audio { background: linear-gradient(135deg, #f43f5e, #fb7185); }
+        .btn-photo { background: #f59e0b; font-size: 12px; padding: 12px; border-radius: 14px; }
 
-        #progress-box {
-            display: none; margin-top: 20px; padding: 15px; 
-            background: rgba(0,0,0,0.5); border-radius: 20px;
+        .dl-btn:active { transform: scale(0.96); }
+
+        #loading-container {
+            display: none; margin-top: 20px; background: rgba(0,0,0,0.5);
+            padding: 20px; border-radius: 25px; border: 1px solid var(--primary);
         }
-        .p-bar { width: 100%; height: 8px; background: #000; border-radius: 5px; margin-top: 10px; overflow: hidden; }
-        .p-fill { width: 0%; height: 100%; background: var(--primary); transition: 0.3s; }
+
+        .p-bar-bg { width: 100%; height: 10px; background: #000; border-radius: 10px; overflow: hidden; margin-top: 10px; }
+        .p-bar-fill { width: 0%; height: 100%; background: linear-gradient(to right, var(--primary), var(--accent)); transition: width 0.3s; }
+
+        .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        
+        .footer { margin-top: 40px; font-size: 13px; opacity: 0.5; }
+        .footer a { color: var(--primary); text-decoration: none; font-weight: 700; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1 style="background: linear-gradient(to right, #fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">TikTok Save</h1>
+    <h1>TikTok Downloader</h1>
 
     <div class="input-group">
-        <input type="text" id="urlInput" placeholder="লিঙ্কটি পেস্ট করুন...">
+        <input type="text" id="urlInput" placeholder="লিঙ্কটি এখানে দিন...">
         <button class="paste-btn" onclick="pasteUrl()">Paste</button>
     </div>
 
-    <button class="fetch-btn" id="fetchBtn" onclick="handleFetch()">🚀 Start</button>
-
-    <div id="loading-shimmer">
-        <div class="shimmer-card"></div>
-        <p style="font-size: 13px; margin-top: 10px; opacity: 0.6;">ইমফরমেশন খোঁজা হচ্ছে, একটু অপেক্ষা করুন...</p>
-    </div>
+    <button class="fetch-btn" id="fetchBtn" onclick="handleFetch()">🚀 ডাউনলোড লিঙ্ক খুঁজুন</button>
 
     <div id="result-area">
         <div class="video-card">
@@ -130,77 +133,94 @@
 
         <div id="download-options" class="dl-group"></div>
 
-        <div id="progress-box">
-            <div style="display: flex; justify-content: space-between; font-size: 12px;">
-                <span>ডাউনলোড হচ্ছে...</span>
+        <div id="loading-container">
+            <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                <span id="loaderStatus">ডাউনলোড হচ্ছে...</span>
                 <span id="pPercent">0%</span>
             </div>
-            <div class="p-bar"><div class="p-fill" id="pFill"></div></div>
+            <div class="p-bar-bg"><div class="p-bar-fill" id="pBar"></div></div>
         </div>
+    </div>
+
+    <div class="footer">
+        Created by <b>GX Sammim</b><br><br>
+        <a href="https://t.me/sammim14" target="_blank">Telegram</a> • <a href="https://www.facebook.com/share/1SD3SzGTyj/" target="_blank">Facebook</a>
     </div>
 </div>
 
 <script>
     async function pasteUrl() {
-        const text = await navigator.clipboard.readText();
-        document.getElementById("urlInput").value = text;
+        try {
+            const text = await navigator.clipboard.readText();
+            document.getElementById("urlInput").value = text;
+        } catch (e) {}
     }
 
     async function handleFetch() {
         const url = document.getElementById("urlInput").value.trim();
-        if (!url.includes("tiktok.com")) return alert("সঠিক লিঙ্ক দিন!");
+        if (!url.includes("tiktok.com")) return alert("সঠিক টিকটক লিঙ্ক দিন!");
 
         const fetchBtn = document.getElementById("fetchBtn");
-        const shimmer = document.getElementById("loading-shimmer");
         const resultArea = document.getElementById("result-area");
 
-        // বাটন টিপলে সাথে সাথে লোডার দেখাবে
         resultArea.style.display = "none";
-        shimmer.style.display = "block";
-        fetchBtn.innerText = "Processing...";
+        fetchBtn.innerText = "🔍 প্রসেসিং হচ্ছে...";
         fetchBtn.disabled = true;
 
         try {
-            // Promise.all ব্যবহার করা হয়েছে যাতে দুইটা এপিআই একসাথে কাজ শুরু করে
-            const [res1, res2] = await Promise.all([
-                fetch(`https://tikwm.com/api/?url=${encodeURIComponent(url)}`),
-                fetch(`https://tikwm.com/api/?url=${encodeURIComponent(url)}&hd=1`)
-            ]);
-
+            // ১ নম্বর এপিআই কল (Standard)
+            const res1 = await fetch(`https://tikwm.com/api/?url=${encodeURIComponent(url)}`);
             const data1 = await res1.json();
+            
+            // ২ নম্বর এপিআই কল (HD=1)
+            const res2 = await fetch(`https://tikwm.com/api/?url=${encodeURIComponent(url)}&hd=1`);
             const data2 = await res2.json();
 
             if (data1.data) {
                 renderResult(data1.data, data2.data);
             } else {
-                alert("কিছু ভুল হয়েছে অথবা ভিডিওটি প্রাইভেট!");
+                alert("ভিডিও খুঁজে পাওয়া যায়নি!");
             }
         } catch (err) {
-            alert("সার্ভার এরর! আবার চেষ্টা করুন।");
+            alert("কানেকশন এরর! আবার চেষ্টা করুন।");
         } finally {
-            shimmer.style.display = "none";
-            fetchBtn.innerText = "🚀 Start";
+            fetchBtn.innerText = "🚀 ডাউনলোড লিঙ্ক খুঁজুন";
             fetchBtn.disabled = false;
         }
     }
 
-    function renderResult(d1, d2) {
-        document.getElementById("user-img").src = d1.author.avatar;
-        document.getElementById("user-name").innerText = "@" + d1.author.nickname;
-        document.getElementById("video-title").innerText = d1.title || "No Title";
+    function renderResult(standard, hd) {
+        document.getElementById("user-img").src = standard.author.avatar;
+        document.getElementById("user-name").innerText = "@" + standard.author.nickname;
+        document.getElementById("video-title").innerText = standard.title || "TikTok Video";
         
         const group = document.getElementById("download-options");
         group.innerHTML = ""; 
 
-        if (d1.play) {
-            addBtn(group, "📥 ডাউনলোড ১ (Server 01)", "btn-1", () => startDownload(d1.play, "Video_S1.mp4"));
+        if (standard.play) {
+            // ডাউনলোড ১ (Standard Server)
+            addBtn(group, "📥 ডাউনলোড ১ (Server 1)", "btn-1", () => startDownload(standard.play, "GX_Video_S1.mp4"));
             
-            // HD লিঙ্ক চেক করা হচ্ছে
-            const hdUrl = (d2 && d2.hdplay) ? d2.hdplay : (d1.hdplay || d1.play);
-            addBtn(group, "🚀 ডাউনলোড ২ (Server 02 - HD)", "btn-2", () => startDownload(hdUrl, "Video_HD.mp4"));
+            // ডাউনলোড ২ (HD Server - hd=1 ব্যবহার করে)
+            const hdUrl = (hd && hd.hdplay) ? hd.hdplay : (standard.hdplay || standard.play);
+            addBtn(group, "🚀 ডাউনলোড ২ (HD Server)", "btn-2", () => startDownload(hdUrl, "GX_Video_HD.mp4"));
             
-            addBtn(group, "🌐 ডাউনলোড ৩ (Browser)", "btn-3", () => window.open(d1.play, '_blank'));
+            // ডাউনলোড ৩ (Direct Browser)
+            addBtn(group, "🌐 ডাউনলোড ৩ (Browser)", "btn-3", () => window.open(standard.play, '_blank'));
         }
+
+        // ফটো স্লাইড শো হলে
+        if (standard.images && standard.images.length > 0) {
+            const grid = document.createElement('div');
+            grid.className = "photo-grid";
+            standard.images.forEach((img, i) => {
+                addBtn(grid, `ফটো ${i+1}`, "btn-photo", () => startDownload(img, `Photo_${i+1}.jpg`));
+            });
+            group.appendChild(grid);
+        }
+
+        // অডিও ফাইল
+        addBtn(group, "🎵 অডিও ডাউনলোড (MP3)", "btn-audio", () => startDownload(standard.music, "Audio.mp3"));
 
         document.getElementById("result-area").style.display = "block";
     }
@@ -214,33 +234,33 @@
     }
 
     async function startDownload(url, name) {
-        const box = document.getElementById("progress-box");
-        const fill = document.getElementById("pFill");
+        const load = document.getElementById("loading-container");
+        const bar = document.getElementById("pBar");
         const per = document.getElementById("pPercent");
 
-        box.style.display = "block";
-        fill.style.width = "0%";
+        load.style.display = "block";
+        bar.style.width = "0%";
         
-        let p = 0;
-        let t = setInterval(() => {
-            if (p < 90) { p += 5; fill.style.width = p + "%"; per.innerText = p + "%"; }
-        }, 100);
+        let progress = 0;
+        let timer = setInterval(() => {
+            if (progress < 95) { progress += 5; bar.style.width = progress + "%"; per.innerText = progress + "%"; }
+        }, 150);
 
         try {
             const res = await fetch(url);
             const blob = await res.blob();
-            clearInterval(t);
-            fill.style.width = "100%"; per.innerText = "100%";
+            clearInterval(timer);
+            bar.style.width = "100%"; per.innerText = "100%";
 
             const link = document.createElement('a');
             link.href = window.URL.createObjectURL(blob);
             link.download = name;
             link.click();
-            setTimeout(() => { box.style.display = "none"; }, 1500);
+            setTimeout(() => { load.style.display = "none"; }, 1500);
         } catch (e) {
-            clearInterval(t);
+            clearInterval(timer);
             window.open(url, '_blank');
-            box.style.display = "none";
+            load.style.display = "none";
         }
     }
 </script>
