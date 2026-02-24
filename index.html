@@ -42,17 +42,24 @@
 
         .fetch-btn { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--primary), var(--accent)); color: #020617; border: none; border-radius: 18px; font-weight: 900; font-size: 15px; cursor: pointer; transition: 0.3s; }
 
-        /* Loader CSS */
-        .loader-container { display: none; margin-top: 20px; text-align: left; transition: 0.3s; }
+        /* লিঙ্ক বক্স ও ক্রস বাটন */
+        #info-box { 
+            display: none; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 18px; 
+            margin: 20px 0; border: 1px solid var(--primary); position: relative; text-align: left; 
+        }
+        #link-txt { font-size: 12px; color: var(--primary); word-break: break-all; padding-right: 35px; display: block; line-height: 1.4; }
+        .close-btn { 
+            position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.1); 
+            border: none; color: white; cursor: pointer; font-size: 16px; width: 26px; height: 26px; 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        }
+
+        .loader-container { display: none; margin-top: 20px; text-align: left; }
         .loader-info { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; color: var(--primary); }
         .bar-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
-        .bar-fill { width: 0%; height: 100%; background: var(--primary); transition: 0.1s; }
+        .bar-fill { width: 0%; height: 100%; background: var(--primary); transition: 0.2s; }
 
-        #info-box { display: none; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 15px; margin: 20px 0; border: 1px solid var(--primary); position: relative; text-align: left; }
-        #link-txt { font-size: 11px; color: var(--primary); word-break: break-all; padding-right: 30px; display: block; }
-        .close-btn { position: absolute; top: 50%; right: 10px; transform: translateY(-50%); background: none; border: none; color: white; cursor: pointer; font-size: 16px; }
-
-        #result-area { display: none; margin-top: 20px; }
+        #result-area { display: none; margin-top: 10px; }
         .video-card { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 20px; border: 1px solid var(--border); display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
         #user-img { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--primary); }
         .user-info { text-align: left; }
@@ -60,9 +67,8 @@
         .user-info p { margin: 2px 0 0; font-size: 11px; opacity: 0.5; }
 
         .dl-group { display: flex; flex-direction: column; gap: 10px; }
-        .dl-btn { padding: 13px; border: none; border-radius: 15px; font-weight: 700; font-size: 13px; cursor: pointer; color: white; text-align: center; text-decoration: none; transition: 0.2s; }
+        .dl-btn { padding: 13px; border: none; border-radius: 15px; font-weight: 700; font-size: 13px; cursor: pointer; color: white; text-align: center; text-decoration: none; display: block; }
         .btn-s1 { background: #2563eb; }
-        .btn-s2 { background: #7c3aed; }
         .btn-browser { background: #0891b2; }
         .btn-mp3 { background: #f43f5e; }
 
@@ -76,26 +82,26 @@
 <body>
 
 <div class="container">
-    <div id="main-view">
+    <div id="input-section">
         <h1>TikTok Downloader</h1>
         <div class="input-area">
             <input type="text" id="urlInput" placeholder="TikTok লিঙ্কটি এখানে দিন...">
             <button class="paste-btn" onclick="pasteUrl()">Paste</button>
         </div>
-        <button class="fetch-btn" id="fetchMainBtn" onclick="startFetch()">🚀 ডাউনলোড লিঙ্ক খুঁজুন</button>
-        
-        <div class="loader-container" id="loadingBox">
-            <div class="loader-info">
-                <span id="status">প্রসেসিং...</span>
-                <span id="percent">0%</span>
-            </div>
-            <div class="bar-bg"><div class="bar-fill" id="bar"></div></div>
-        </div>
+        <button class="fetch-btn" onclick="startFetch()">🚀 ডাউনলোড লিঙ্ক খুঁজুন</button>
     </div>
 
     <div id="info-box">
         <span id="link-txt"></span>
         <button class="close-btn" onclick="reset()">✕</button>
+    </div>
+
+    <div class="loader-container" id="loadingBox">
+        <div class="loader-info">
+            <span id="status">প্রসেসিং...</span>
+            <span id="percent">0%</span>
+        </div>
+        <div class="bar-bg"><div class="bar-fill" id="bar"></div></div>
     </div>
 
     <div id="result-area">
@@ -130,45 +136,36 @@
         } catch(e) { alert("Clipboard এক্সেস দিন!"); }
     }
 
-    function showLoader(txt, val) {
-        const lb = document.getElementById("loadingBox");
-        lb.style.display = "block";
+    function updateLoader(txt, val) {
+        document.getElementById("loadingBox").style.display = "block";
         document.getElementById("status").innerText = txt;
         document.getElementById("percent").innerText = Math.round(val) + "%";
         document.getElementById("bar").style.width = val + "%";
-    }
-
-    function hideLoader() {
-        document.getElementById("loadingBox").style.display = "none";
     }
 
     async function startFetch() {
         currentUrl = document.getElementById("urlInput").value.trim();
         if(!currentUrl.includes("tiktok.com")) return alert("সঠিক TikTok লিঙ্ক দিন!");
 
-        showLoader("সার্ভার চেক করা হচ্ছে...", 20);
+        updateLoader("লিঙ্ক চেক করা হচ্ছে...", 40);
 
         try {
             const r = await fetch(`https://tikwm.com/api/?url=${encodeURIComponent(currentUrl)}&hd=1`);
             const j = await r.json();
-            if(j.data) showFinal(j.data);
-            else throw "err";
+            if(j.data) showResult(j.data);
+            else alert("সার্ভার ব্যস্ত!");
         } catch(e) {
-            showLoader("বিকল্প সার্ভার ট্রাই করছি...", 50);
-            try {
-                const r2 = await fetch(`https://www.tikwm.com/api/?url=${encodeURIComponent(currentUrl)}`);
-                const j2 = await r2.json();
-                if(j2.data) showFinal(j2.data);
-                else { alert("সার্ভার ডাউন!"); hideLoader(); }
-            } catch(err) { alert("Error!"); hideLoader(); }
+            alert("Error!");
+            reset();
         }
     }
 
-    function showFinal(data) {
-        showLoader("সম্পন্ন!", 100);
+    function showResult(data) {
+        updateLoader("সম্পন্ন!", 100);
         setTimeout(() => {
-            hideLoader();
-            document.getElementById("main-view").style.display = "none";
+            document.getElementById("loadingBox").style.display = "none";
+            document.getElementById("input-section").style.display = "none";
+            
             document.getElementById("link-txt").innerText = "লিঙ্ক: " + currentUrl;
             document.getElementById("info-box").style.display = "block";
             
@@ -176,62 +173,42 @@
             document.getElementById("user-name").innerText = "@" + data.author.nickname;
             document.getElementById("video-title").innerText = data.title || "TikTok Video";
             
-            const vLink = data.play;
-            const mLink = data.music;
-
             const btnBox = document.getElementById("dl-buttons");
             btnBox.innerHTML = `
-                <button class="dl-btn btn-s1" onclick="initiateDownload('${vLink}', 'Video_S1.mp4')">🚀 ডাউনলোড ১ (Server 1)</button>
-                <button class="dl-btn btn-s2" onclick="initiateDownload('${vLink}', 'Video_S2.mp4')">📥 ডাউনলোড ২ (Server 2)</button>
-                <a href="${vLink}" target="_blank" class="dl-btn btn-browser">🌐 ব্রাউজার ডাউনলোড</a>
-                <button class="dl-btn btn-mp3" onclick="initiateDownload('${mLink}', 'Music.mp3')">🎵 অডিও ডাউনলোড (MP3)</button>
+                <button class="dl-btn btn-s1" onclick="downloadFile('${data.play}', 'TikTok_Video.mp4')">🚀 ডাউনলোড ১ (Server 1)</button>
+                <a href="${data.play}" target="_blank" class="dl-btn btn-browser">🌐 ব্রাউজার ডাউনলোড</a>
+                <button class="dl-btn btn-mp3" onclick="downloadFile('${data.music}', 'Music.mp3')">🎵 অডিও ডাউনলোড (MP3)</button>
             `;
             document.getElementById("result-area").style.display = "block";
         }, 500);
     }
 
-    // ডাউনলোড ফাংশন - যা সাথে সাথে লোডার দেখাবে
-    async function initiateDownload(url, filename) {
-        // বাটনে চাপ দেওয়ার সাথে সাথে এই অংশটি রান করবে
-        document.getElementById("main-view").style.display = "block"; // লোডার দেখানোর জন্য মেনু ভিউ ব্যাক আনা
-        showLoader("লিঙ্ক কানেক্ট হচ্ছে...", 5);
-
+    async function downloadFile(url, name) {
+        document.getElementById("loadingBox").style.display = "block";
+        updateLoader("কানেক্ট হচ্ছে...", 10);
+        
         try {
-            const response = await fetch(url);
-            const reader = response.body.getReader();
-            const contentLength = +response.headers.get('Content-Length');
-            
-            let receivedLength = 0;
+            const res = await fetch(url);
+            const reader = res.body.getReader();
+            const length = +res.headers.get('Content-Length');
+            let received = 0;
             let chunks = [];
 
             while(true) {
                 const {done, value} = await reader.read();
                 if (done) break;
                 chunks.push(value);
-                receivedLength += value.length;
-                
-                if (contentLength) {
-                    let progress = (receivedLength / contentLength) * 100;
-                    showLoader("ডাউনলোড হচ্ছে...", progress);
-                }
+                received += value.length;
+                if (length) updateLoader("ডাউনলোড হচ্ছে...", (received / length) * 100);
             }
 
             const blob = new Blob(chunks);
-            const dUrl = window.URL.createObjectURL(blob);
+            const dUrl = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.href = dUrl;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            
-            showLoader("সফল!", 100);
-            setTimeout(hideLoader, 1500);
-
-        } catch (error) {
-            window.open(url, '_blank');
-            hideLoader();
-        }
+            a.href = dUrl; a.download = name; a.click();
+            updateLoader("সফল!", 100);
+            setTimeout(() => { document.getElementById("loadingBox").style.display = "none"; }, 1500);
+        } catch (e) { window.open(url, '_blank'); }
     }
 </script>
 </body>
