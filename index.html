@@ -79,20 +79,21 @@
         .user-info h4 { margin: 0; font-size: 16px; color: var(--primary); }
         .user-info p { margin: 4px 0 0; font-size: 12px; opacity: 0.8; line-height: 1.4; }
 
-        .dl-group { display: flex; flex-direction: column; gap: 14px; }
+        .dl-group { display: flex; flex-direction: column; gap: 10px; }
         
+        /* বাটন চিকন করা হয়েছে এখানে */
         .dl-btn {
-            padding: 16px; border: none; border-radius: 20px;
-            font-weight: 800; font-size: 15px; cursor: pointer;
-            color: white; display: flex; align-items: center; justify-content: center; gap: 12px;
+            padding: 12px; border: none; border-radius: 15px;
+            font-weight: 700; font-size: 14px; cursor: pointer;
+            color: white; display: flex; align-items: center; justify-content: center; gap: 10px;
             transition: 0.3s;
         }
         
-        .btn-1 { background: linear-gradient(135deg, #2563eb, #3b82f6); box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3); } 
-        .btn-2 { background: linear-gradient(135deg, #7c3aed, #a855f7); box-shadow: 0 6px 15px rgba(124, 58, 237, 0.3); } 
+        .btn-1 { background: linear-gradient(135deg, #2563eb, #3b82f6); box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2); } 
+        .btn-2 { background: linear-gradient(135deg, #7c3aed, #a855f7); box-shadow: 0 4px 10px rgba(124, 58, 237, 0.2); } 
         .btn-3 { background: linear-gradient(135deg, #0891b2, #06b6d4); } 
         .btn-audio { background: linear-gradient(135deg, #f43f5e, #fb7185); }
-        .btn-photo { background: #f59e0b; font-size: 12px; padding: 12px; border-radius: 14px; }
+        .btn-photo { background: #f59e0b; font-size: 11px; padding: 10px; border-radius: 12px; }
 
         .dl-btn:active { transform: scale(0.96); }
 
@@ -168,12 +169,13 @@
         fetchBtn.disabled = true;
 
         try {
-            // ১ নম্বর এপিআই কল (Standard)
-            const res1 = await fetch(`https://tikwm.com/api/?url=${encodeURIComponent(url)}`);
-            const data1 = await res1.json();
+            // একসাথে দুটি রিকোয়েস্ট পাঠানো হচ্ছে (Parallel Fetching) যাতে দ্রুত কাজ করে
+            const [res1, res2] = await Promise.all([
+                fetch(`https://tikwm.com/api/?url=${encodeURIComponent(url)}`),
+                fetch(`https://tikwm.com/api/?url=${encodeURIComponent(url)}&hd=1`)
+            ]);
             
-            // ২ নম্বর এপিআই কল (HD=1)
-            const res2 = await fetch(`https://tikwm.com/api/?url=${encodeURIComponent(url)}&hd=1`);
+            const data1 = await res1.json();
             const data2 = await res2.json();
 
             if (data1.data) {
@@ -201,7 +203,7 @@
             // ডাউনলোড ১ (Standard Server)
             addBtn(group, "📥 ডাউনলোড ১ (Server 1)", "btn-1", () => startDownload(standard.play, "GX_Video_S1.mp4"));
             
-            // ডাউনলোড ২ (HD Server - hd=1 ব্যবহার করে)
+            // ডাউনলোড ২ (HD Server)
             const hdUrl = (hd && hd.hdplay) ? hd.hdplay : (standard.hdplay || standard.play);
             addBtn(group, "🚀 ডাউনলোড ২ (HD Server)", "btn-2", () => startDownload(hdUrl, "GX_Video_HD.mp4"));
             
