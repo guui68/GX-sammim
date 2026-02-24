@@ -9,123 +9,109 @@
         :root {
             --primary: #00f2fe;
             --accent: #00ffa3;
-            --bg-dark: #0f172a; /* আরও ডিপ এবং ক্লিন ডার্ক ব্লু-ব্ল্যাক */
-            --glass: rgba(255, 255, 255, 0.05);
+            --bg-dark: #05070a; /* আরও ডিপ ডার্ক ব্যাকগ্রাউন্ড */
+            --card-bg: #0d1117;
+            --glass: rgba(255, 255, 255, 0.03);
         }
 
         body {
             margin: 0; padding: 20px;
             font-family: 'Outfit', sans-serif;
-            /* ব্যাকগ্রাউন্ড রিডিজাইন: হালকা গ্লো ইফেক্ট */
             background-color: var(--bg-dark);
-            background-image: 
-                radial-gradient(circle at 50% -20%, rgba(0, 242, 254, 0.15), transparent 50%),
-                radial-gradient(circle at 50% 120%, rgba(79, 70, 229, 0.1), transparent 50%);
+            background-image: radial-gradient(circle at top right, rgba(0, 242, 254, 0.08), transparent 40%);
             color: white; display: flex; flex-direction: column; 
             align-items: center; justify-content: center; min-height: 100vh;
-            overflow-x: hidden;
         }
 
         .container {
-            width: 100%; max-width: 400px;
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            padding: 30px; border-radius: 35px;
-            /* ক্লিন শ্যাডো ইফেক্ট */
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255,255,255,0.08);
+            width: 100%; max-width: 380px;
+            background: var(--card-bg);
+            padding: 25px; border-radius: 30px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+            border: 1px solid rgba(255,255,255,0.05);
             text-align: center;
-            position: relative;
         }
 
-        /* কার্ডের পেছনে হালকা গ্লো */
-        .container::before {
-            content: ""; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
-            background: linear-gradient(135deg, rgba(0,242,254,0.2), transparent, rgba(0,255,163,0.1));
-            z-index: -1; border-radius: 37px; filter: blur(10px);
-        }
-
-        h1 { font-size: 26px; font-weight: 800; margin-bottom: 25px; 
-             letter-spacing: -0.5px;
+        h1 { font-size: 24px; font-weight: 800; margin-bottom: 25px; letter-spacing: -0.5px;
              background: linear-gradient(135deg, #fff, var(--primary));
              -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        .input-group {
-            display: flex; background: rgba(255, 255, 255, 1);
-            border-radius: 18px; padding: 5px; margin-bottom: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        /* প্রিমিয়াম ইনপুট বক্স উইথ ক্লোজ বাটন */
+        .input-wrapper {
+            position: relative;
+            background: #fff;
+            border-radius: 15px;
+            display: flex; align-items: center;
+            padding: 5px 10px; margin-bottom: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
         input {
-            flex: 1; border: none; padding: 10px 15px;
-            font-size: 14px; outline: none; color: #1e293b;
+            flex: 1; border: none; padding: 10px;
+            font-size: 14px; outline: none; color: #111;
             background: transparent; font-weight: 600;
+        }
+
+        .clear-btn {
+            background: #eee; color: #666; border: none;
+            width: 22px; height: 22px; border-radius: 50%;
+            font-size: 12px; cursor: pointer; display: none;
+            align-items: center; justify-content: center; margin-right: 5px;
         }
 
         .paste-btn {
             background: #4f46e5; color: white; border: none;
-            padding: 8px 15px; border-radius: 14px;
-            font-weight: 700; cursor: pointer; transition: 0.3s;
-            font-size: 13px;
+            padding: 8px 15px; border-radius: 10px;
+            font-weight: 700; cursor: pointer; font-size: 12px;
         }
 
+        /* চিকন প্রিমিয়াম বাটন */
         .fetch-btn {
-            width: 100%; padding: 13px; 
+            width: 100%; padding: 12px; 
             background: linear-gradient(45deg, #00c853, #00ffa3);
-            color: #052e16; border: none; border-radius: 16px;
-            font-weight: 800; font-size: 15px; cursor: pointer;
-            box-shadow: 0 8px 20px rgba(0, 255, 163, 0.15);
-            transition: 0.4s;
+            color: #052e16; border: none; border-radius: 12px;
+            font-weight: 800; font-size: 14px; cursor: pointer;
+            transition: 0.3s;
         }
 
-        #search-loader {
-            display: none; margin-top: 15px; 
-            padding: 10px; background: rgba(0, 242, 254, 0.05);
-            border-radius: 12px; border: 1px dashed rgba(0, 242, 254, 0.3);
-            font-size: 13px; color: var(--primary);
-            animation: pulse 1.5s infinite;
+        /* প্রসেসিং এবং ডাউনলোড প্রগ্রেস বার */
+        .progress-box {
+            display: none; margin-top: 20px; text-align: left;
+            background: rgba(255,255,255,0.03); padding: 12px; border-radius: 15px;
         }
+        .progress-text { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 8px; color: var(--primary); }
+        .p-bar-bg { width: 100%; height: 6px; background: #000; border-radius: 10px; overflow: hidden; }
+        .p-bar-fill { width: 0%; height: 100%; background: var(--primary); transition: width 0.3s; }
 
-        #result-area { display: none; margin-top: 25px; animation: slideUp 0.5s ease; }
+        #result-area { display: none; margin-top: 25px; animation: fadeIn 0.5s ease; }
 
         .video-card {
-            background: rgba(255,255,255,0.04); padding: 15px;
+            background: rgba(255,255,255,0.03); padding: 12px;
             border-radius: 20px; margin-bottom: 15px; text-align: left;
             border: 1px solid rgba(255,255,255,0.05);
-            display: flex; align-items: center; gap: 12px;
+            display: flex; align-items: center; gap: 10px;
         }
 
-        #user-img { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--primary); }
-        .user-info h4 { margin: 0; font-size: 15px; color: var(--primary); }
-        .user-info p { margin: 3px 0 0; font-size: 11px; opacity: 0.7; }
+        #user-img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--primary); }
+        .user-info h4 { margin: 0; font-size: 14px; color: #fff; }
+        .user-info p { margin: 2px 0 0; font-size: 10px; opacity: 0.6; }
 
         .dl-group { display: flex; flex-direction: column; gap: 8px; }
         
         .dl-btn {
-            padding: 11px; border: none; border-radius: 14px;
+            padding: 10px; border: none; border-radius: 10px;
             font-weight: 700; font-size: 13px; cursor: pointer;
             color: white; display: flex; align-items: center; justify-content: center; gap: 8px;
-            transition: 0.3s;
         }
         
-        .btn-1 { background: linear-gradient(135deg, #2563eb, #3b82f6); } 
-        .btn-2 { background: linear-gradient(135deg, #7c3aed, #a855f7); } 
-        .btn-3 { background: linear-gradient(135deg, #0891b2, #06b6d4); } 
-        .btn-audio { background: linear-gradient(135deg, #f43f5e, #fb7185); }
+        .btn-1 { background: #2563eb; } 
+        .btn-2 { background: #7c3aed; } 
+        .btn-audio { background: #f43f5e; }
 
-        #loading-container {
-            display: none; margin-top: 20px; background: rgba(0,0,0,0.3);
-            padding: 15px; border-radius: 20px; border: 1px solid rgba(0, 242, 254, 0.2);
-        }
-
-        .p-bar-bg { width: 100%; height: 8px; background: #000; border-radius: 10px; overflow: hidden; margin-top: 8px; }
-        .p-bar-fill { width: 0%; height: 100%; background: linear-gradient(to right, var(--primary), var(--accent)); transition: width 0.3s; }
-
-        .footer { margin-top: 30px; font-size: 12px; opacity: 0.4; }
+        .footer { margin-top: 30px; font-size: 11px; opacity: 0.3; }
         .footer a { color: var(--primary); text-decoration: none; }
 
-        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -133,14 +119,21 @@
 <div class="container">
     <h1>TikTok Downloader</h1>
 
-    <div class="input-group">
-        <input type="text" id="urlInput" placeholder="লিঙ্কটি এখানে দিন...">
+    <div class="input-wrapper">
+        <input type="text" id="urlInput" placeholder="লিঙ্কটি এখানে দিন..." oninput="toggleClearBtn()">
+        <button class="clear-btn" id="clearBtn" onclick="clearInput()">✕</button>
         <button class="paste-btn" onclick="pasteUrl()">Paste</button>
     </div>
 
     <button class="fetch-btn" id="fetchBtn" onclick="handleFetch()">🚀 ডাউনলোড লিঙ্ক খুঁজুন</button>
     
-    <div id="search-loader">🔍 ভিডিওর তথ্য সংগ্রহ করা হচ্ছে...</div>
+    <div id="main-progress" class="progress-box">
+        <div class="progress-text">
+            <span id="statusText">ভিডিওর তথ্য খোঁজা হচ্ছে...</span>
+            <span id="pPercent">0%</span>
+        </div>
+        <div class="p-bar-bg"><div class="p-bar-fill" id="pBar"></div></div>
+    </div>
 
     <div id="result-area">
         <div class="video-card">
@@ -150,16 +143,7 @@
                 <p id="video-title"></p>
             </div>
         </div>
-
         <div id="download-options" class="dl-group"></div>
-
-        <div id="loading-container">
-            <div style="display: flex; justify-content: space-between; font-size: 11px;">
-                <span id="loaderStatus">ডাউনলোড হচ্ছে...</span>
-                <span id="pPercent">0%</span>
-            </div>
-            <div class="p-bar-bg"><div class="p-bar-fill" id="pBar"></div></div>
-        </div>
     </div>
 
     <div class="footer">
@@ -169,10 +153,22 @@
 </div>
 
 <script>
+    function toggleClearBtn() {
+        const input = document.getElementById("urlInput");
+        const clearBtn = document.getElementById("clearBtn");
+        clearBtn.style.display = input.value.length > 0 ? "flex" : "none";
+    }
+
+    function clearInput() {
+        document.getElementById("urlInput").value = "";
+        toggleClearBtn();
+    }
+
     async function pasteUrl() {
         try {
             const text = await navigator.clipboard.readText();
             document.getElementById("urlInput").value = text;
+            toggleClearBtn();
         } catch (e) {}
     }
 
@@ -181,34 +177,48 @@
         if (!url.includes("tiktok.com")) return alert("সঠিক টিকটক লিঙ্ক দিন!");
 
         const fetchBtn = document.getElementById("fetchBtn");
-        const searchLoader = document.getElementById("search-loader");
+        const progressBox = document.getElementById("main-progress");
         const resultArea = document.getElementById("result-area");
+        const bar = document.getElementById("pBar");
+        const per = document.getElementById("pPercent");
+        const statusText = document.getElementById("statusText");
 
         resultArea.style.display = "none";
-        searchLoader.style.display = "block";
+        progressBox.style.display = "block";
+        statusText.innerText = "ভিডিওর তথ্য খোঁজা হচ্ছে...";
         fetchBtn.disabled = true;
-        fetchBtn.style.opacity = "0.7";
+
+        // সিমিউলেটেড প্রগ্রেস ফর ফেচিং
+        let p = 0;
+        let interval = setInterval(() => {
+            if (p < 90) { p += 10; bar.style.width = p + "%"; per.innerText = p + "%"; }
+        }, 100);
 
         try {
             const [res1, res2] = await Promise.all([
                 fetch(`https://tikwm.com/api/?url=${encodeURIComponent(url)}`),
                 fetch(`https://tikwm.com/api/?url=${encodeURIComponent(url)}&hd=1`)
             ]);
-            
             const data1 = await res1.json();
             const data2 = await res2.json();
 
+            clearInterval(interval);
+            bar.style.width = "100%"; per.innerText = "100%";
+
             if (data1.data) {
-                renderResult(data1.data, data2.data);
+                setTimeout(() => {
+                    progressBox.style.display = "none";
+                    renderResult(data1.data, data2.data);
+                }, 500);
             } else {
-                alert("ভিডিও খুঁজে পাওয়া যায়নি!");
+                alert("ভিডিও পাওয়া যায়নি!");
+                progressBox.style.display = "none";
             }
         } catch (err) {
-            alert("কানেকশন এরর! আবার চেষ্টা করুন।");
+            alert("এরর হয়েছে!");
+            progressBox.style.display = "none";
         } finally {
-            searchLoader.style.display = "none";
             fetchBtn.disabled = false;
-            fetchBtn.style.opacity = "1";
         }
     }
 
@@ -221,13 +231,11 @@
         group.innerHTML = ""; 
 
         if (standard.play) {
-            addBtn(group, "📥 ডাউনলোড ১ (Server 1)", "btn-1", () => startDownload(standard.play, "GX_Video_S1.mp4"));
+            addBtn(group, "📥 ডাউনলোড ১ (Server 1)", "btn-1", () => startDownload(standard.play, "GX_S1.mp4"));
             const hdUrl = (hd && hd.hdplay) ? hd.hdplay : (standard.hdplay || standard.play);
-            addBtn(group, "🚀 ডাউনলোড ২ (HD Server)", "btn-2", () => startDownload(hdUrl, "GX_Video_HD.mp4"));
-            addBtn(group, "🌐 ডাউনলোড ৩ (Browser)", "btn-3", () => window.open(standard.play, '_blank'));
+            addBtn(group, "🚀 ডাউনলোড ২ (HD Server)", "btn-2", () => startDownload(hdUrl, "GX_HD.mp4"));
         }
-
-        addBtn(group, "🎵 অডিও ডাউনলোড (MP3)", "btn-audio", () => startDownload(standard.music, "Audio.mp3"));
+        addBtn(group, "🎵 অডিও (MP3)", "btn-audio", () => startDownload(standard.music, "GX_Audio.mp3"));
 
         document.getElementById("result-area").style.display = "block";
     }
@@ -241,17 +249,19 @@
     }
 
     async function startDownload(url, name) {
-        const load = document.getElementById("loading-container");
+        const progressBox = document.getElementById("main-progress");
         const bar = document.getElementById("pBar");
         const per = document.getElementById("pPercent");
+        const statusText = document.getElementById("statusText");
 
-        load.style.display = "block";
+        progressBox.style.display = "block";
+        statusText.innerText = "ডাউনলোড হচ্ছে...";
         bar.style.width = "0%";
         
-        let progress = 0;
+        let p = 0;
         let timer = setInterval(() => {
-            if (progress < 95) { progress += 5; bar.style.width = progress + "%"; per.innerText = progress + "%"; }
-        }, 150);
+            if (p < 95) { p += 5; bar.style.width = p + "%"; per.innerText = p + "%"; }
+        }, 200);
 
         try {
             const res = await fetch(url);
@@ -263,11 +273,10 @@
             link.href = window.URL.createObjectURL(blob);
             link.download = name;
             link.click();
-            setTimeout(() => { load.style.display = "none"; }, 1500);
+            setTimeout(() => { progressBox.style.display = "none"; }, 2000);
         } catch (e) {
-            clearInterval(timer);
             window.open(url, '_blank');
-            load.style.display = "none";
+            progressBox.style.display = "none";
         }
     }
 </script>
